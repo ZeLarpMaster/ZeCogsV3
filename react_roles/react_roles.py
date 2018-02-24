@@ -12,7 +12,7 @@ from redbot.core import RedContext, Config, checks
 from redbot.core.bot import Red
 from redbot.core.i18n import CogI18n
 
-_ = CogI18n("ReactRoles", __file__)  # python %PYTHON%\Tools\i18n\pygettext.py -n -p locales
+_ = CogI18n("ReactRoles", __file__)
 
 
 class ReactRoles:

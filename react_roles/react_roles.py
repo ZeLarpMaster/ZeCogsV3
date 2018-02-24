@@ -54,8 +54,6 @@ Gave a total of {g} roles.""")
     REACTION_CLEAN_START = ROLE_UNBOUND + _("Removing linked reactions...")
     PROGRESS_REMOVED = ROLE_UNBOUND + _("Removed **{} / {}** reactions...")
     REACTION_CLEAN_DONE = ROLE_UNBOUND + _("Removed **{}** reactions.")
-    NO_CLIENT_MODIFICATION = _("\nYou do not have the client_modification cog installed. "
-                               "You may expect roles to not work after restarting.")
     LINK_MESSAGE_NOT_FOUND = _("The following messages weren't found: {}")
     LINK_CHANNEL_NOT_FOUND = _("The following channels weren't found: {}")
     LINK_PAIR_INVALID = _("The following channel-message pairs were invalid: {}")

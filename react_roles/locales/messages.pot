@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-02-23 21:47-0500\n"
+"POT-Creation-Date: 2018-02-23 22:32-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -107,45 +107,39 @@ msgid "Removed **{}** reactions."
 msgstr ""
 
 #: react_roles.py:57
-msgid ""
-"\n"
-"You do not have the client_modification cog installed. You may expect roles to not work after restarting."
-msgstr ""
-
-#: react_roles.py:59
 msgid "The following messages weren't found: {}"
 msgstr ""
 
-#: react_roles.py:60
+#: react_roles.py:58
 msgid "The following channels weren't found: {}"
 msgstr ""
 
-#: react_roles.py:61
+#: react_roles.py:59
 msgid "The following channel-message pairs were invalid: {}"
 msgstr ""
 
-#: react_roles.py:62
+#: react_roles.py:60
 msgid ""
 ":x: Failed to link reactions.\n"
 msgstr ""
 
-#: react_roles.py:63
+#: react_roles.py:61
 msgid ":white_check_mark: Successfully linked the reactions."
 msgstr ""
 
-#: react_roles.py:64
+#: react_roles.py:62
 msgid ":x: That link name is already used in the current server. Remove it before assigning to it."
 msgstr ""
 
-#: react_roles.py:65
+#: react_roles.py:63
 msgid ":x: Could not find a link with that name in this server."
 msgstr ""
 
-#: react_roles.py:66
+#: react_roles.py:64
 msgid ":white_check_mark: The link has been removed from this server."
 msgstr ""
 
-#: react_roles.py:67
+#: react_roles.py:65
 msgid ":x: Cannot run a check on linked messages."
 msgstr ""
 

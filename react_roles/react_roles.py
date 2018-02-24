@@ -64,6 +64,7 @@ Gave a total of {g} roles."""
     _UNLINK_NOT_FOUND = ":x: Could not find a link with that name in this server."
     _UNLINK_SUCCESSFUL = ":white_check_mark: The link has been removed from this server."
     _CANT_CHECK_LINKED = ":x: Cannot run a check on linked messages."
+    _REACTION_NOT_FOUND = ":x: Could not find the reaction of that message."
 
     def __init__(self, bot: Red):
         self.bot = bot
@@ -301,21 +302,24 @@ Gave a total of {g} roles."""
             self.remove_role_from_cache(guild.id, channel.id, message_id, emoji_str)
             msg = await self.safe_get_message(channel, message_id)
             if msg is None:
-                await ctx.send(self.MESSAGE_NOT_FOUND)
+                await ctx.send(self.ROLE_UNBOUND + self.MESSAGE_NOT_FOUND)
             else:
-                answer = await ctx.send(self.REACTION_CLEAN_START)
                 reaction = discord.utils.find(
                     lambda r: r.emoji.id == emoji_str if r.custom_emoji else r.emoji == emoji_str, msg.reactions)
-                after = None
-                count = 0
-                user = None
-                for page in range(math.ceil(reaction.count / 100)):
-                    async for user in reaction.users(after=after):
-                        await msg.remove_reaction(reaction.emoji, user)
-                        count += 1
-                    after = user
-                    await answer.edit(content=self.PROGRESS_REMOVED.format(count, reaction.count))
-                await answer.edit(content=self.REACTION_CLEAN_DONE.format(count))
+                if reaction is None:
+                    await ctx.send(self.ROLE_UNBOUND + self.REACTION_NOT_FOUND)
+                else:
+                    answer = await ctx.send(self.REACTION_CLEAN_START)
+                    after = None
+                    count = 0
+                    user = None
+                    for page in range(math.ceil(reaction.count / 100)):
+                        async for user in reaction.users(after=after):
+                            await msg.remove_reaction(reaction.emoji, user)
+                            count += 1
+                        after = user
+                        await answer.edit(content=self.PROGRESS_REMOVED.format(count, reaction.count))
+                    await answer.edit(content=self.REACTION_CLEAN_DONE.format(count))
 
     @_roles.command(name="check", pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_roles=True)

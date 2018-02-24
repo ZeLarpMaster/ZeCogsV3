@@ -48,7 +48,7 @@ coverage.xml
 
 # Translations
 *.mo
-*.pot
+# *.pot
 
 # Django stuff:
 *.log
@@ -99,3 +99,5 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+.idea/

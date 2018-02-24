@@ -25,44 +25,45 @@ class ReactRoles:
     MAXIMUM_PROCESSED_PER_SECOND = 5
     PROCESSING_WAIT_TIME = 0 if MAXIMUM_PROCESSED_PER_SECOND == 0 else 1 / MAXIMUM_PROCESSED_PER_SECOND
     EMOTE_REGEX = re.compile("<a?:[a-zA-Z0-9_]{2,32}:(\d{1,20})>")
+    LOCALIZED_ATTRIBUTE_REGEX = re.compile("([A-Z][A-Z_]+)")
 
     # Embed constants
-    LINK_LIST_TITLE = _("Role Links")
-    LINK_LIST_NO_LINKS = _("There are no links in this server")
+    _LINK_LIST_TITLE = "Role Links"
+    _LINK_LIST_NO_LINKS = "There are no links in this server"
 
     # Logging message constants
-    LOG_MESSAGE_NOT_FOUND = _("Could not find message {msg_id} in {channel}.")
-    LOG_CHANNEL_NOT_FOUND = _("Could not find channel {channel_id}.")
-    LOG_SERVER_NOT_FOUND = _("Could not find server with id {guild_id}.")
-    LOG_PROCESSING_LOOP_ENDED = _("The processing loop has ended.")
+    _LOG_MESSAGE_NOT_FOUND = "Could not find message {msg_id} in {channel}."
+    _LOG_CHANNEL_NOT_FOUND = "Could not find channel {channel_id}."
+    _LOG_SERVER_NOT_FOUND = "Could not find server with id {guild_id}."
+    _LOG_PROCESSING_LOOP_ENDED = "The processing loop has ended."
 
     # Message constants
-    PROGRESS_FORMAT = _("Checked {c} out of {r} reactions out of {t} emojis.")
-    PROGRESS_COMPLETE_FORMAT = _(""":white_check_mark: Completed! Checked a total of {c} reactions.
-Gave a total of {g} roles.""")
-    MESSAGE_NOT_FOUND = _(":x: Message not found.")
-    ALREADY_BOUND = _(":x: The emoji is already bound on that message.")
-    NOT_IN_SERVER = _(":x: The channel must be in a server.")
-    ROLE_NOT_FOUND = _(":x: Role not found on the given channel's server.")
-    EMOJI_NOT_FOUND = _(":x: Emoji not found in any of my servers or in unicode emojis.")
-    CANT_ADD_REACTIONS = _(":x: I don't have the permission to add reactions in that channel.")
-    CANT_MANAGE_ROLES = _(":x: I don't have the permission to manage users' roles in the channel's server.")
-    ROLE_SUCCESSFULLY_BOUND = _(":white_check_mark: The role has been bound to {} on the message in {}.")
-    ROLE_NOT_BOUND = _(":x: The role is not bound to that message.")
-    INITIALIZING = _("Initializing...")
-    ROLE_UNBOUND = _(":put_litter_in_its_place: Unbound the role on the message.\n")
-    REACTION_CLEAN_START = ROLE_UNBOUND + _("Removing linked reactions...")
-    PROGRESS_REMOVED = ROLE_UNBOUND + _("Removed **{} / {}** reactions...")
-    REACTION_CLEAN_DONE = ROLE_UNBOUND + _("Removed **{}** reactions.")
-    LINK_MESSAGE_NOT_FOUND = _("The following messages weren't found: {}")
-    LINK_CHANNEL_NOT_FOUND = _("The following channels weren't found: {}")
-    LINK_PAIR_INVALID = _("The following channel-message pairs were invalid: {}")
-    LINK_FAILED = _(":x: Failed to link reactions.\n")
-    LINK_SUCCESSFUL = _(":white_check_mark: Successfully linked the reactions.")
-    LINK_NAME_TAKEN = _(":x: That link name is already used in the current server. Remove it before assigning to it.")
-    UNLINK_NOT_FOUND = _(":x: Could not find a link with that name in this server.")
-    UNLINK_SUCCESSFUL = _(":white_check_mark: The link has been removed from this server.")
-    CANT_CHECK_LINKED = _(":x: Cannot run a check on linked messages.")
+    _PROGRESS_FORMAT = "Checked {c} out of {r} reactions out of {t} emojis."
+    _PROGRESS_COMPLETE_FORMAT = """:white_check_mark: Completed! Checked a total of {c} reactions.
+Gave a total of {g} roles."""
+    _MESSAGE_NOT_FOUND = ":x: Message not found."
+    _ALREADY_BOUND = ":x: The emoji is already bound on that message."
+    _NOT_IN_SERVER = ":x: The channel must be in a server."
+    _ROLE_NOT_FOUND = ":x: Role not found on the given channel's server."
+    _EMOJI_NOT_FOUND = ":x: Emoji not found in any of my servers or in unicode emojis."
+    _CANT_ADD_REACTIONS = ":x: I don't have the permission to add reactions in that channel."
+    _CANT_MANAGE_ROLES = ":x: I don't have the permission to manage users' roles in the channel's server."
+    _ROLE_SUCCESSFULLY_BOUND = ":white_check_mark: The role has been bound to {} on the message in {}."
+    _ROLE_NOT_BOUND = ":x: The role is not bound to that message."
+    _INITIALIZING = "Initializing..."
+    _ROLE_UNBOUND = ":put_litter_in_its_place: Unbound the role on the message.\n"
+    _REACTION_CLEAN_START = _ROLE_UNBOUND + "Removing linked reactions..."
+    _PROGRESS_REMOVED = _ROLE_UNBOUND + "Removed **{} / {}** reactions..."
+    _REACTION_CLEAN_DONE = _ROLE_UNBOUND + "Removed **{}** reactions."
+    _LINK_MESSAGE_NOT_FOUND = "The following messages weren't found: {}"
+    _LINK_CHANNEL_NOT_FOUND = "The following channels weren't found: {}"
+    _LINK_PAIR_INVALID = "The following channel-message pairs were invalid: {}"
+    _LINK_FAILED = ":x: Failed to link reactions.\n"
+    _LINK_SUCCESSFUL = ":white_check_mark: Successfully linked the reactions."
+    _LINK_NAME_TAKEN = ":x: That link name is already used in the current server. Remove it before assigning to it."
+    _UNLINK_NOT_FOUND = ":x: Could not find a link with that name in this server."
+    _UNLINK_SUCCESSFUL = ":white_check_mark: The link has been removed from this server."
+    _CANT_CHECK_LINKED = ":x: Cannot run a check on linked messages."
 
     def __init__(self, bot: Red):
         self.bot = bot
@@ -500,3 +501,11 @@ Gave a total of {g} roles.""")
 
     def remove_from_message_cache(self, channel_id: int, message_id: int):
         self.message_cache.pop("{}_{}".format(channel_id, message_id), None)
+
+    def __getattr__(self, item: str) -> object:
+        match = self.LOCALIZED_ATTRIBUTE_REGEX.fullmatch(item)
+        if match is not None:
+            underscored = getattr(self, "_" + item, None)
+            if underscored is not None:
+                return _(underscored)
+        raise AttributeError("'{}' object has no attribute '{}'".format(self.__class__.__name__, item))

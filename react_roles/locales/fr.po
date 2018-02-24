@@ -1,0 +1,165 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2018-02-23 22:32-0500\n"
+"PO-Revision-Date: 2018-02-23 22:47-0500\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 2.0.6\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: react_roles.py:30
+msgid "Role Links"
+msgstr "Liens de rôle"
+
+#: react_roles.py:31
+msgid "There are no links in this server"
+msgstr "Il n’y a pas de liens dans ce serveur"
+
+#: react_roles.py:34
+msgid "Could not find message {msg_id} in {channel}."
+msgstr "Le message {msg_id} dans {channel} est introuvable."
+
+#: react_roles.py:35
+msgid "Could not find channel {channel_id}."
+msgstr "Le salon {channel_id} est introuvable."
+
+#: react_roles.py:36
+msgid "Could not find server with id {guild_id}."
+msgstr "Le serveur avec id {guild_id} est introuvable."
+
+#: react_roles.py:37
+msgid "The processing loop has ended."
+msgstr "La boucle de traitement s'est terminée."
+
+#: react_roles.py:40
+msgid "Checked {c} out of {r} reactions out of {t} emojis."
+msgstr "{c} sur {r} réactions on été vérifiées sur {t} emojis."
+
+#: react_roles.py:41
+msgid ""
+":white_check_mark: Completed! Checked a total of {c} reactions.\n"
+"Gave a total of {g} roles."
+msgstr ""
+":white_check_mark: Terminé! Un total de {c} réactions on été vérifiées.\n"
+"{g} rôles ont été attribués."
+
+#: react_roles.py:43
+msgid ":x: Message not found."
+msgstr ":x: Message introuvable."
+
+#: react_roles.py:44
+msgid ":x: The emoji is already bound on that message."
+msgstr ":x: Cet emoji est déjà assigné à ce message."
+
+#: react_roles.py:45
+msgid ":x: The channel must be in a server."
+msgstr ":x: Le salon doit être dans un serveur."
+
+#: react_roles.py:46
+msgid ":x: Role not found on the given channel's server."
+msgstr ":x: Le rôle n'a pas été trouvé dans le serveur du salon donné."
+
+#: react_roles.py:47
+msgid ":x: Emoji not found in any of my servers or in unicode emojis."
+msgstr ""
+":x: L'emoji est introuvable dans mes serveurs ou dans les emojis Unicode."
+
+#: react_roles.py:48
+msgid ":x: I don't have the permission to add reactions in that channel."
+msgstr ":x: Je n'ai pas la permission d'ajouter des réactions dans ce salon."
+
+#: react_roles.py:49
+msgid ""
+":x: I don't have the permission to manage users' roles in the channel's "
+"server."
+msgstr ""
+":x: Je n'ai pas la permission de gérer les rôles dans le serveur du salon "
+"donné."
+
+#: react_roles.py:50
+msgid ":white_check_mark: The role has been bound to {} on the message in {}."
+msgstr ":white_check_mark: Le rôle a été assigné à {} sur le message dans {}."
+
+#: react_roles.py:51
+msgid ":x: The role is not bound to that message."
+msgstr ":x: Le rôle n'est pas assigné à ce message."
+
+#: react_roles.py:52
+msgid "Initializing..."
+msgstr "Initialisation..."
+
+#: react_roles.py:53
+msgid ":put_litter_in_its_place: Unbound the role on the message.\n"
+msgstr ":put_litter_in_its_place: Le rôle a été désassigné du message.\n"
+
+#: react_roles.py:54
+msgid "Removing linked reactions..."
+msgstr "Suppression des réactions liées..."
+
+#: react_roles.py:55
+msgid "Removed **{} / {}** reactions..."
+msgstr "**{} / {}** réactions supprimées..."
+
+#: react_roles.py:56
+msgid "Removed **{}** reactions."
+msgstr "**{}** réactions supprimées."
+
+#: react_roles.py:57
+msgid "The following messages weren't found: {}"
+msgstr "Les messages suivants sont introuvables: {}"
+
+#: react_roles.py:58
+msgid "The following channels weren't found: {}"
+msgstr "Les salons suivants sont introuvables: {}"
+
+#: react_roles.py:59
+msgid "The following channel-message pairs were invalid: {}"
+msgstr "Les paires de salon-message suivantes sont invalides: {}"
+
+#: react_roles.py:60
+msgid ":x: Failed to link reactions.\n"
+msgstr ":x: La liaison des réactions a échoué.\n"
+
+#: react_roles.py:61
+msgid ":white_check_mark: Successfully linked the reactions."
+msgstr ":white_check_mark: Les réactions ont été liées avec succès."
+
+#: react_roles.py:62
+msgid ""
+":x: That link name is already used in the current server. Remove it before "
+"assigning to it."
+msgstr ""
+":x: Ce nom de lien est déjà utilisé dans ce serveur-ci. Supprimez-le avant "
+"de réassigner au même nom."
+
+#: react_roles.py:63
+msgid ":x: Could not find a link with that name in this server."
+msgstr ":x: Ce nom de lien est introuvable sur ce serveur-ci."
+
+#: react_roles.py:64
+msgid ":white_check_mark: The link has been removed from this server."
+msgstr ":white_check_mark: Le lien a été supprimé du serveur."
+
+#: react_roles.py:65
+msgid ":x: Cannot run a check on linked messages."
+msgstr ":x: Il est impossible de vérifier des messages liés."
+
+#~ msgid ""
+#~ "\n"
+#~ "You do not have the client_modification cog installed. You may expect "
+#~ "roles to not work after restarting."
+#~ msgstr ""
+#~ "\n"
+#~ "Vous n'avez pas la cog client_modification d'installée. Vous pouvez vous "
+#~ "attendre à ce que les rôles ne fonctionnent pas correctement après un "
+#~ "redémarrage."

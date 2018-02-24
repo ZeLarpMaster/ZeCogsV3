@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-02-23 22:32-0500\n"
-"PO-Revision-Date: 2018-02-24 13:03-0500\n"
+"POT-Creation-Date: 2018-02-24 14:19-0500\n"
+"PO-Revision-Date: 2018-02-24 14:20-0500\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -17,35 +17,35 @@ msgstr ""
 "X-Generator: Poedit 2.0.6\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: react_roles.py:31
+#: react_roles.py:479
 msgid "Role Links"
 msgstr "Role Links"
 
-#: react_roles.py:32
+#: react_roles.py:480
 msgid "There are no links in this server"
 msgstr "There are no links in this server"
 
-#: react_roles.py:35
+#: react_roles.py:483
 msgid "Could not find message {msg_id} in {channel}."
 msgstr "Could not find message {msg_id} in {channel}."
 
-#: react_roles.py:36
+#: react_roles.py:484
 msgid "Could not find channel {channel_id}."
 msgstr "Could not find channel {channel_id}."
 
-#: react_roles.py:37
+#: react_roles.py:485
 msgid "Could not find server with id {guild_id}."
 msgstr "Could not find server with id {guild_id}."
 
-#: react_roles.py:38
+#: react_roles.py:486
 msgid "The processing loop has ended."
 msgstr "The processing loop has ended."
 
-#: react_roles.py:41
+#: react_roles.py:489
 msgid "Checked {c} out of {r} reactions out of {t} emojis."
 msgstr "Checked {c} out of {r} reactions out of {t} emojis."
 
-#: react_roles.py:42
+#: react_roles.py:490
 msgid ""
 ":white_check_mark: Completed! Checked a total of {c} reactions.\n"
 "Gave a total of {g} roles."
@@ -53,31 +53,31 @@ msgstr ""
 ":white_check_mark: Completed! Checked a total of {c} reactions.\n"
 "Gave a total of {g} roles."
 
-#: react_roles.py:44
+#: react_roles.py:492
 msgid ":x: Message not found."
 msgstr ":x: Message not found."
 
-#: react_roles.py:45
+#: react_roles.py:493
 msgid ":x: The emoji is already bound on that message."
 msgstr ":x: The emoji is already bound on that message."
 
-#: react_roles.py:46
+#: react_roles.py:494
 msgid ":x: The channel must be in a server."
 msgstr ":x: The channel must be in a server."
 
-#: react_roles.py:47
+#: react_roles.py:495
 msgid ":x: Role not found on the given channel's server."
 msgstr ":x: Role not found on the given channel's server."
 
-#: react_roles.py:48
+#: react_roles.py:496
 msgid ":x: Emoji not found in any of my servers or in unicode emojis."
 msgstr ":x: Emoji not found in any of my servers or in unicode emojis."
 
-#: react_roles.py:49
+#: react_roles.py:497
 msgid ":x: I don't have the permission to add reactions in that channel."
 msgstr ":x: I don't have the permission to add reactions in that channel."
 
-#: react_roles.py:50
+#: react_roles.py:498
 msgid ""
 ":x: I don't have the permission to manage users' roles in the channel's "
 "server."
@@ -85,55 +85,55 @@ msgstr ""
 ":x: I don't have the permission to manage users' roles in the channel's "
 "server."
 
-#: react_roles.py:51
+#: react_roles.py:499
 msgid ":white_check_mark: The role has been bound to {} on the message in {}."
 msgstr ":white_check_mark: The role has been bound to {} on the message in {}."
 
-#: react_roles.py:52
+#: react_roles.py:500
 msgid ":x: The role is not bound to that message."
 msgstr ":x: The role is not bound to that message."
 
-#: react_roles.py:53
+#: react_roles.py:501
 msgid "Initializing..."
 msgstr "Initializing..."
 
-#: react_roles.py:54
+#: react_roles.py:502
 msgid ":put_litter_in_its_place: Unbound the role on the message.\n"
 msgstr ":put_litter_in_its_place: Unbound the role on the message.\n"
 
-#: react_roles.py:55
+#: react_roles.py:503
 msgid "Removing linked reactions..."
 msgstr "Removing linked reactions..."
 
-#: react_roles.py:56
+#: react_roles.py:504
 msgid "Removed **{} / {}** reactions..."
 msgstr "Removed **{} / {}** reactions..."
 
-#: react_roles.py:57
+#: react_roles.py:505
 msgid "Removed **{}** reactions."
 msgstr "Removed **{}** reactions."
 
-#: react_roles.py:58
+#: react_roles.py:506
 msgid "The following messages weren't found: {}"
 msgstr "The following messages weren't found: {}"
 
-#: react_roles.py:59
+#: react_roles.py:507
 msgid "The following channels weren't found: {}"
 msgstr "The following channels weren't found: {}"
 
-#: react_roles.py:60
+#: react_roles.py:508
 msgid "The following channel-message pairs were invalid: {}"
 msgstr "The following channel-message pairs were invalid: {}"
 
-#: react_roles.py:61
+#: react_roles.py:509
 msgid ":x: Failed to link reactions.\n"
 msgstr ":x: Failed to link reactions.\n"
 
-#: react_roles.py:62
+#: react_roles.py:510
 msgid ":white_check_mark: Successfully linked the reactions."
 msgstr ":white_check_mark: Successfully linked the reactions."
 
-#: react_roles.py:63
+#: react_roles.py:511
 msgid ""
 ":x: That link name is already used in the current server. Remove it before "
 "assigning to it."
@@ -141,19 +141,19 @@ msgstr ""
 ":x: That link name is already used in the current server. Remove it before "
 "assigning to it."
 
-#: react_roles.py:64
+#: react_roles.py:513
 msgid ":x: Could not find a link with that name in this server."
 msgstr ":x: Could not find a link with that name in this server."
 
-#: react_roles.py:65
+#: react_roles.py:514
 msgid ":white_check_mark: The link has been removed from this server."
 msgstr ":white_check_mark: The link has been removed from this server."
 
-#: react_roles.py:66
+#: react_roles.py:515
 msgid ":x: Cannot run a check on linked messages."
 msgstr ":x: Cannot run a check on linked messages."
 
-#: react_roles.py:67
+#: react_roles.py:516
 msgid ":x: Could not find the reaction of that message."
 msgstr ":x: Could not find the reaction of that message."
 

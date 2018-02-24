@@ -1,6 +1,7 @@
 import asyncio
 import discord
 import itertools
+import inspect
 import logging
 import math
 import re
@@ -10,7 +11,7 @@ import typing
 from discord.ext import commands
 from redbot.core import RedContext, Config, checks
 from redbot.core.bot import Red
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import CogI18n, get_locale
 
 _ = CogI18n("ReactRoles", __file__)
 
@@ -25,50 +26,13 @@ class ReactRoles:
     MAXIMUM_PROCESSED_PER_SECOND = 5
     PROCESSING_WAIT_TIME = 0 if MAXIMUM_PROCESSED_PER_SECOND == 0 else 1 / MAXIMUM_PROCESSED_PER_SECOND
     EMOTE_REGEX = re.compile("<a?:[a-zA-Z0-9_]{2,32}:(\d{1,20})>")
-    LOCALIZED_ATTRIBUTE_REGEX = re.compile("([A-Z][A-Z_]+)")
-
-    # Embed constants
-    _LINK_LIST_TITLE = "Role Links"
-    _LINK_LIST_NO_LINKS = "There are no links in this server"
-
-    # Logging message constants
-    _LOG_MESSAGE_NOT_FOUND = "Could not find message {msg_id} in {channel}."
-    _LOG_CHANNEL_NOT_FOUND = "Could not find channel {channel_id}."
-    _LOG_SERVER_NOT_FOUND = "Could not find server with id {guild_id}."
-    _LOG_PROCESSING_LOOP_ENDED = "The processing loop has ended."
-
-    # Message constants
-    _PROGRESS_FORMAT = "Checked {c} out of {r} reactions out of {t} emojis."
-    _PROGRESS_COMPLETE_FORMAT = """:white_check_mark: Completed! Checked a total of {c} reactions.
-Gave a total of {g} roles."""
-    _MESSAGE_NOT_FOUND = ":x: Message not found."
-    _ALREADY_BOUND = ":x: The emoji is already bound on that message."
-    _NOT_IN_SERVER = ":x: The channel must be in a server."
-    _ROLE_NOT_FOUND = ":x: Role not found on the given channel's server."
-    _EMOJI_NOT_FOUND = ":x: Emoji not found in any of my servers or in unicode emojis."
-    _CANT_ADD_REACTIONS = ":x: I don't have the permission to add reactions in that channel."
-    _CANT_MANAGE_ROLES = ":x: I don't have the permission to manage users' roles in the channel's server."
-    _ROLE_SUCCESSFULLY_BOUND = ":white_check_mark: The role has been bound to {} on the message in {}."
-    _ROLE_NOT_BOUND = ":x: The role is not bound to that message."
-    _INITIALIZING = "Initializing..."
-    _ROLE_UNBOUND = ":put_litter_in_its_place: Unbound the role on the message.\n"
-    _REACTION_CLEAN_START = _ROLE_UNBOUND + "Removing linked reactions..."
-    _PROGRESS_REMOVED = _ROLE_UNBOUND + "Removed **{} / {}** reactions..."
-    _REACTION_CLEAN_DONE = _ROLE_UNBOUND + "Removed **{}** reactions."
-    _LINK_MESSAGE_NOT_FOUND = "The following messages weren't found: {}"
-    _LINK_CHANNEL_NOT_FOUND = "The following channels weren't found: {}"
-    _LINK_PAIR_INVALID = "The following channel-message pairs were invalid: {}"
-    _LINK_FAILED = ":x: Failed to link reactions.\n"
-    _LINK_SUCCESSFUL = ":white_check_mark: Successfully linked the reactions."
-    _LINK_NAME_TAKEN = ":x: That link name is already used in the current server. Remove it before assigning to it."
-    _UNLINK_NOT_FOUND = ":x: Could not find a link with that name in this server."
-    _UNLINK_SUCCESSFUL = ":white_check_mark: The link has been removed from this server."
-    _CANT_CHECK_LINKED = ":x: Cannot run a check on linked messages."
-    _REACTION_NOT_FOUND = ":x: Could not find the reaction of that message."
 
     def __init__(self, bot: Red):
         self.bot = bot
         self.logger = logging.getLogger("red.ZeCogsV3.react_roles")
+        self.inject_before_invokes()
+        self.previous_locale = None
+        self.reload_translations()
         # force_registration is for weaklings
         self.config = Config.get_conf(self, identifier=self.__author__ + "@" + self.__class__.__name__)
         self.config.register_guild(links={})
@@ -134,9 +98,9 @@ Gave a total of {g} roles."""
                                 self.add_to_message_cache(channel_id, msg_id, msg)
                                 self.add_to_cache(channel.guild.id, channel_id, msg_id, emoji_str, role)
                     else:
-                        self.logger.warning(self.LOG_MESSAGE_NOT_FOUND.format(msg_id=msg_id, channel=channel.mention))
+                        self.warn(lambda: self.LOG_MESSAGE_NOT_FOUND, msg_id=msg_id, channel=channel.mention)
             else:
-                self.logger.warning(self.LOG_CHANNEL_NOT_FOUND.format(channel_id=channel_id))
+                self.warn(lambda: self.LOG_CHANNEL_NOT_FOUND, channel_id=channel_id)
 
         # Caching links
         guild_configs = await self.config.all_guilds()
@@ -147,7 +111,7 @@ Gave a total of {g} roles."""
                 if link_list is not None:
                     self.parse_links(guild_id, link_list.values())
             else:
-                self.logger.warning(self.LOG_SERVER_NOT_FOUND.format(guild_id=guild_id))
+                self.warn(lambda: self.LOG_SERVER_NOT_FOUND, guild_id=guild_id)
 
     # Commands
     @commands.group(name="roles", pass_context=True, no_pm=True, invoke_without_command=True)
@@ -428,7 +392,8 @@ Gave a total of {g} roles."""
                     self.role_queue.task_done()
                 finally:
                     await asyncio.sleep(self.PROCESSING_WAIT_TIME)
-        self.logger.info(self.LOG_PROCESSING_LOOP_ENDED)
+        self.reload_translations()
+        self.info(lambda: self.LOG_PROCESSING_LOOP_ENDED)
 
     # Utilities
     async def safe_get_message(self, channel: discord.TextChannel, message_id: str) -> typing.Optional[discord.Message]:
@@ -506,10 +471,62 @@ Gave a total of {g} roles."""
     def remove_from_message_cache(self, channel_id: int, message_id: int):
         self.message_cache.pop("{}_{}".format(channel_id, message_id), None)
 
-    def __getattr__(self, item: str) -> object:
-        match = self.LOCALIZED_ATTRIBUTE_REGEX.fullmatch(item)
-        if match is not None:
-            underscored = getattr(self, "_" + item, None)
-            if underscored is not None:
-                return _(underscored)
-        raise AttributeError("'{}' object has no attribute '{}'".format(self.__class__.__name__, item))
+    def reload_translations(self):
+        if self.previous_locale == get_locale():
+            return  # Don't care if the locale hasn't changed
+
+        # Embed constants
+        self.LINK_LIST_TITLE = _("Role Links")
+        self.LINK_LIST_NO_LINKS = _("There are no links in this server")
+
+        # Logging message constants
+        self.LOG_MESSAGE_NOT_FOUND = _("Could not find message {msg_id} in {channel}.")
+        self.LOG_CHANNEL_NOT_FOUND = _("Could not find channel {channel_id}.")
+        self.LOG_SERVER_NOT_FOUND = _("Could not find server with id {guild_id}.")
+        self.LOG_PROCESSING_LOOP_ENDED = _("The processing loop has ended.")
+
+        # Message constants
+        self.PROGRESS_FORMAT = _("Checked {c} out of {r} reactions out of {t} emojis.")
+        self.PROGRESS_COMPLETE_FORMAT = _(""":white_check_mark: Completed! Checked a total of {c} reactions.
+Gave a total of {g} roles.""")
+        self.MESSAGE_NOT_FOUND = _(":x: Message not found.")
+        self.ALREADY_BOUND = _(":x: The emoji is already bound on that message.")
+        self.NOT_IN_SERVER = _(":x: The channel must be in a server.")
+        self.ROLE_NOT_FOUND = _(":x: Role not found on the given channel's server.")
+        self.EMOJI_NOT_FOUND = _(":x: Emoji not found in any of my servers or in unicode emojis.")
+        self.CANT_ADD_REACTIONS = _(":x: I don't have the permission to add reactions in that channel.")
+        self.CANT_MANAGE_ROLES = _(":x: I don't have the permission to manage users' roles in the channel's server.")
+        self.ROLE_SUCCESSFULLY_BOUND = _(":white_check_mark: The role has been bound to {} on the message in {}.")
+        self.ROLE_NOT_BOUND = _(":x: The role is not bound to that message.")
+        self.INITIALIZING = _("Initializing...")
+        self.ROLE_UNBOUND = _(":put_litter_in_its_place: Unbound the role on the message.\n")
+        self.REACTION_CLEAN_START = self.ROLE_UNBOUND + _("Removing linked reactions...")
+        self.PROGRESS_REMOVED = self.ROLE_UNBOUND + _("Removed **{} / {}** reactions...")
+        self.REACTION_CLEAN_DONE = self.ROLE_UNBOUND + _("Removed **{}** reactions.")
+        self.LINK_MESSAGE_NOT_FOUND = _("The following messages weren't found: {}")
+        self.LINK_CHANNEL_NOT_FOUND = _("The following channels weren't found: {}")
+        self.LINK_PAIR_INVALID = _("The following channel-message pairs were invalid: {}")
+        self.LINK_FAILED = _(":x: Failed to link reactions.\n")
+        self.LINK_SUCCESSFUL = _(":white_check_mark: Successfully linked the reactions.")
+        self.LINK_NAME_TAKEN = _(":x: That link name is already used in the current server. "
+                                 "Remove it before assigning to it.")
+        self.UNLINK_NOT_FOUND = _(":x: Could not find a link with that name in this server.")
+        self.UNLINK_SUCCESSFUL = _(":white_check_mark: The link has been removed from this server.")
+        self.CANT_CHECK_LINKED = _(":x: Cannot run a check on linked messages.")
+        self.REACTION_NOT_FOUND = _(":x: Could not find the reaction of that message.")
+
+    def log(self, logging_func: typing.Callable, *args, **kwargs):
+        self.reload_translations()
+        logging_func(*args, **kwargs)
+
+    def info(self, msg: typing.Callable[[], str], *args, **kwargs):
+        self.log(self.logger.info, msg().format(*args, **kwargs))
+
+    def warn(self, msg: typing.Callable[[], str], *args, **kwargs):
+        self.log(self.logger.warning, msg().format(*args, **kwargs))
+
+    def inject_before_invokes(self):
+        for name, value in inspect.getmembers(self, lambda o: isinstance(o, commands.Command)):
+            async def wrapped_reload(*_):
+                self.reload_translations()
+            value.before_invoke(wrapped_reload)

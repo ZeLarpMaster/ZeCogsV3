@@ -114,13 +114,15 @@ class ReactRoles:
                 self.warn(lambda: self.LOG_SERVER_NOT_FOUND, guild_id=guild_id)
 
     # Commands
-    @commands.group(name="roles", pass_context=True, no_pm=True, invoke_without_command=True)
+    @commands.group(name="roles", pass_context=True, invoke_without_command=True)
+    @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
     async def _roles(self, ctx: RedContext):
         """Roles giving configuration"""
         await ctx.send_help()
 
-    @_roles.command(name="linklist", pass_context=True, no_pm=True)
+    @_roles.command(name="linklist", pass_context=True)
+    @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
     async def _roles_link_list(self, ctx: RedContext):
         """Lists all reaction links in the current server"""
@@ -137,7 +139,8 @@ class ReactRoles:
             embed.description = self.LINK_LIST_NO_LINKS
         await ctx.send(embed=embed)
 
-    @_roles.command(name="unlink", pass_context=True, no_pm=True)
+    @_roles.command(name="unlink", pass_context=True)
+    @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
     async def _roles_unlink(self, ctx: RedContext, name: str):
         """Remove a link of messages by its name"""
@@ -151,7 +154,8 @@ class ReactRoles:
             response = self.UNLINK_SUCCESSFUL
         await ctx.send(response)
 
-    @_roles.command(name="link", pass_context=True, no_pm=True)
+    @_roles.command(name="link", pass_context=True)
+    @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
     async def _roles_link(self, ctx: RedContext, name: str, *linked_messages):
         """Link messages together to allow only one role from those messages to be given to a member
@@ -202,7 +206,8 @@ class ReactRoles:
                     response = self.LINK_SUCCESSFUL
         await ctx.send(response)
 
-    @_roles.command(name="add", pass_context=True, no_pm=True)
+    @_roles.command(name="add", pass_context=True)
+    @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
     async def _roles_add(self, ctx: RedContext, message_id, channel: discord.TextChannel, emoji, *, role: discord.Role):
         """Add a role on a message
@@ -247,7 +252,8 @@ class ReactRoles:
                         response = self.ROLE_SUCCESSFULLY_BOUND.format(emoji or emoji_id, channel.mention)
         await ctx.send(response)
 
-    @_roles.command(name="remove", pass_context=True, no_pm=True)
+    @_roles.command(name="remove", pass_context=True)
+    @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
     async def _roles_remove(self, ctx: RedContext, message_id, channel: discord.TextChannel, *, role: discord.Role):
         """Remove a role from a message
@@ -285,7 +291,8 @@ class ReactRoles:
                         await answer.edit(content=self.PROGRESS_REMOVED.format(count, reaction.count))
                     await answer.edit(content=self.REACTION_CLEAN_DONE.format(count))
 
-    @_roles.command(name="check", pass_context=True, no_pm=True)
+    @_roles.command(name="check", pass_context=True)
+    @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
     async def _roles_check(self, ctx: RedContext, message_id, channel: discord.TextChannel):
         """Goes through all reactions of a message and gives the roles accordingly

@@ -115,14 +115,14 @@ class ReactRoles:
                 self.warn(lambda: self.LOG_SERVER_NOT_FOUND, guild_id=guild_id)
 
     # Commands
-    @commands.group(name="roles", pass_context=True, invoke_without_command=True)
+    @commands.group(name="roles", invoke_without_command=True)
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
     async def _roles(self, ctx: RedContext):
         """Roles giving configuration"""
         await ctx.send_help()
 
-    @_roles.command(name="linklist", pass_context=True)
+    @_roles.command(name="linklist")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
     async def _roles_link_list(self, ctx: RedContext):
@@ -140,7 +140,7 @@ class ReactRoles:
             embed.description = self.LINK_LIST_NO_LINKS
         await ctx.send(embed=embed)
 
-    @_roles.command(name="unlink", pass_context=True)
+    @_roles.command(name="unlink")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
     async def _roles_unlink(self, ctx: RedContext, name: str):
@@ -155,7 +155,7 @@ class ReactRoles:
             response = self.UNLINK_SUCCESSFUL
         await ctx.send(response)
 
-    @_roles.command(name="link", pass_context=True)
+    @_roles.command(name="link")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
     async def _roles_link(self, ctx: RedContext, name: str, *linked_messages):
@@ -212,7 +212,7 @@ class ReactRoles:
                     response = self.LINK_SUCCESSFUL
         await ctx.send(response)
 
-    @_roles.command(name="add", pass_context=True)
+    @_roles.command(name="add")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
     async def _roles_add(self, ctx: RedContext, message_id: int, channel: discord.TextChannel, emoji, *,
@@ -259,7 +259,7 @@ class ReactRoles:
                     response = self.ROLE_SUCCESSFULLY_BOUND.format(emoji or emoji_id, channel.mention)
         await ctx.send(response)
 
-    @_roles.command(name="remove", pass_context=True)
+    @_roles.command(name="remove")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
     async def _roles_remove(self, ctx: RedContext, message_id: int, channel: discord.TextChannel, *,
@@ -301,7 +301,7 @@ class ReactRoles:
                         await answer.edit(content=self.PROGRESS_REMOVED.format(count, reaction.count))
                     await answer.edit(content=self.REACTION_CLEAN_DONE.format(count))
 
-    @_roles.command(name="check", pass_context=True)
+    @_roles.command(name="check")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
     async def _roles_check(self, ctx: RedContext, message_id: int, channel: discord.TextChannel):

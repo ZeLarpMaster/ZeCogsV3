@@ -7,6 +7,7 @@ import math
 import re
 import traceback
 import typing
+import hashlib
 
 from discord.ext import commands
 from redbot.core import RedContext, Config, checks
@@ -36,7 +37,8 @@ class ReactRoles:
         self.previous_locale = None
         self.reload_translations()
         # force_registration is for weaklings
-        self.config = Config.get_conf(self, identifier=self.__author__ + "@" + self.__class__.__name__)
+        unique_id = int(hashlib.sha512((self.__author__ + "@" + self.__class__.__name__).encode()).hexdigest(), 16)
+        self.config = Config.get_conf(self, identifier=unique_id)
         self.config.register_guild(links={})
         self.role_queue = asyncio.Queue()
         self.role_map = {}

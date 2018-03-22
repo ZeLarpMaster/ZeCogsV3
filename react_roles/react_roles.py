@@ -15,7 +15,7 @@ from redbot.core.config import Group
 from redbot.core.bot import Red
 from redbot.core.i18n import CogI18n, get_locale
 
-_ = CogI18n("ReactRoles", __file__)
+_ = CogI18n("ReactRoles", __file__)  # pygettext3 -a -n -p locales react_roles.py
 
 
 class ReactRoles:
@@ -63,26 +63,14 @@ class ReactRoles:
         except:  # To prevent the listener from exploding if an exception happens
             traceback.print_exc()
 
-    async def on_message_delete(self, message: discord.Message):
-        channel = message.channel
-        if isinstance(channel, discord.TextChannel):
-            guild = message.guild
-            # Remove the message's config
-            message_conf = self.get_message_config(channel.id, message.id)
-            if await message_conf(...) is not ...:  # Because for whatever reason this returns {} instead of None
-                await message_conf.clear()
-            # And the caches
-            self.remove_from_message_cache(channel.id, message.id)
-            self.remove_message_from_cache(guild.id, channel.id, message.id)
-            # And the links' cache
-            pair = str(channel.id) + "_" + str(message.id)
-            if pair in self.links.get(guild.id, {}):
-                del self.links[guild.id][pair]
-            # And the links' config
-            async with self.config.guild(guild).links({}) as server_links:
-                for links in server_links.values():
-                    if pair in links:
-                        links.remove(pair)
+    async def on_raw_message_delete(self, message_id: int, channel_id: int):
+        message = self.get_from_message_cache(channel_id, message_id)
+        if message is not None:
+            await self.check_delete_message(message)
+
+    async def on_raw_bulk_message_delete(self, message_ids: typing.List[int], channel_id: int):
+        for message_id in message_ids:
+            await self.on_raw_message_delete(message_id, channel_id)
 
     async def _init_bot_manipulation(self):
         await self.bot.wait_until_ready()
@@ -375,6 +363,26 @@ class ReactRoles:
                 role = self.get_from_cache(guild.id, channel_id, message_id, emoji_str)
                 if role is not None:
                     await self.add_role_queue(member, role, False)
+
+    async def check_delete_message(self, message: discord.Message):
+        guild = message.guild
+        channel = message.channel
+        # Remove the message's config
+        message_conf = self.get_message_config(channel.id, message.id)
+        if await message_conf(...) is not ...:  # Because for whatever reason this returns {} instead of None
+            await message_conf.clear()
+        # And the caches
+        self.remove_from_message_cache(channel.id, message.id)
+        self.remove_message_from_cache(guild.id, channel.id, message.id)
+        # And the links' cache
+        pair = str(channel.id) + "_" + str(message.id)
+        if pair in self.links.get(guild.id, {}):
+            del self.links[guild.id][pair]
+        # And the links' config
+        async with self.config.guild(guild).links({}) as server_links:
+            for links in server_links.values():
+                if pair in links:
+                    links.remove(pair)
 
     async def add_role_queue(self, member: discord.Member, role: discord.Role, add_bool: bool, *,
                              linked_roles: set=set()):

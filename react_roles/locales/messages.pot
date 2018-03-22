@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-02-27 22:56-0500\n"
+"POT-Creation-Date: 2018-03-21 21:38-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,139 +15,139 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: react_roles.py:500
+#: react_roles.py:510
 msgid "Role Links"
 msgstr ""
 
-#: react_roles.py:501
+#: react_roles.py:511
 msgid "There are no links in this server"
 msgstr ""
 
-#: react_roles.py:504
+#: react_roles.py:514
 msgid "Could not find message {msg_id} in {channel}."
 msgstr ""
 
-#: react_roles.py:505
+#: react_roles.py:515
 msgid "Could not find channel {channel_id}."
 msgstr ""
 
-#: react_roles.py:506
+#: react_roles.py:516
 msgid "Could not find server with id {guild_id}."
 msgstr ""
 
-#: react_roles.py:507
+#: react_roles.py:517
 msgid "The processing loop has ended."
 msgstr ""
 
-#: react_roles.py:510
+#: react_roles.py:520
 msgid "Checked {c} out of {r} reactions out of {t} emojis."
 msgstr ""
 
-#: react_roles.py:511
+#: react_roles.py:521
 msgid ""
 ":white_check_mark: Completed! Checked a total of {c} reactions.\n"
 "Gave a total of {g} roles."
 msgstr ""
 
-#: react_roles.py:513
+#: react_roles.py:523
 msgid ":x: Message not found."
 msgstr ""
 
-#: react_roles.py:514
+#: react_roles.py:524
 msgid ":x: The emoji is already bound on that message."
 msgstr ""
 
-#: react_roles.py:515
+#: react_roles.py:525
 msgid ":x: The channel must be in a server."
 msgstr ""
 
-#: react_roles.py:516
+#: react_roles.py:526
 msgid ":x: Role not found on the given channel's server."
 msgstr ""
 
-#: react_roles.py:517
+#: react_roles.py:527
 msgid ":x: Emoji not found in any of my servers or in unicode emojis."
 msgstr ""
 
-#: react_roles.py:518
+#: react_roles.py:528
 msgid ":x: I don't have the permission to add reactions in that channel."
 msgstr ""
 
-#: react_roles.py:519
+#: react_roles.py:529
 msgid ":x: I don't have the permission to manage users' roles in the channel's server."
 msgstr ""
 
-#: react_roles.py:520
+#: react_roles.py:530
 msgid ":white_check_mark: The role has been bound to {} on the message in {}."
 msgstr ""
 
-#: react_roles.py:521
+#: react_roles.py:531
 msgid ":x: The role is not bound to that message."
 msgstr ""
 
-#: react_roles.py:522
+#: react_roles.py:532
 msgid "Initializing..."
 msgstr ""
 
-#: react_roles.py:523
+#: react_roles.py:533
 msgid ""
 ":put_litter_in_its_place: Unbound the role on the message.\n"
 msgstr ""
 
-#: react_roles.py:524
+#: react_roles.py:534
 msgid "Removing linked reactions..."
 msgstr ""
 
-#: react_roles.py:525
+#: react_roles.py:535
 msgid "Removed **{} / {}** reactions..."
 msgstr ""
 
-#: react_roles.py:526
+#: react_roles.py:536
 msgid "Removed **{}** reactions."
 msgstr ""
 
-#: react_roles.py:527
+#: react_roles.py:537
 msgid "The following messages weren't found: {}"
 msgstr ""
 
-#: react_roles.py:528
+#: react_roles.py:538
 msgid "The following channels weren't found: {}"
 msgstr ""
 
-#: react_roles.py:529
+#: react_roles.py:539
 msgid "The following channel-message pairs were invalid: {}"
 msgstr ""
 
-#: react_roles.py:530
+#: react_roles.py:540
 msgid "You must specify at least one message to be linked."
 msgstr ""
 
-#: react_roles.py:531
+#: react_roles.py:541
 msgid ""
 ":x: Failed to link reactions.\n"
 msgstr ""
 
-#: react_roles.py:532
+#: react_roles.py:542
 msgid ":white_check_mark: Successfully linked the reactions."
 msgstr ""
 
-#: react_roles.py:533
+#: react_roles.py:543
 msgid ":x: That link name is already used in the current server. Remove it before assigning to it."
 msgstr ""
 
-#: react_roles.py:535
+#: react_roles.py:545
 msgid ":x: Could not find a link with that name in this server."
 msgstr ""
 
-#: react_roles.py:536
+#: react_roles.py:546
 msgid ":white_check_mark: The link has been removed from this server."
 msgstr ""
 
-#: react_roles.py:537
+#: react_roles.py:547
 msgid ":x: Cannot run a check on linked messages."
 msgstr ""
 
-#: react_roles.py:538
+#: react_roles.py:548
 msgid ":x: Could not find the reaction of that message."
 msgstr ""
 

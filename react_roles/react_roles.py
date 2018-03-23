@@ -33,6 +33,7 @@ class ReactRoles:
     def __init__(self, bot: Red):
         self.bot = bot
         self.logger = logging.getLogger("red.ZeCogsV3.react_roles")
+        self.logger.setLevel(logging.INFO)
         self.inject_before_invokes()
         self.previous_locale = None
         self.reload_translations()
@@ -76,9 +77,9 @@ class ReactRoles:
         await self.bot.wait_until_ready()
 
         # Caching roles
-        channel_configs = await self.config.all_channels()
+        channel_configs = await self.get_all_message_configs()
         for channel_id, channel_conf in channel_configs.items():
-            channel = self.bot.get_channel(channel_id)
+            channel = self.bot.get_channel(int(channel_id))
             if channel is not None:
                 for msg_id, msg_conf in channel_conf.items():
                     msg = await self.safe_get_message(channel, msg_id)
@@ -501,6 +502,9 @@ class ReactRoles:
 
     def get_message_config(self, channel_id: int, message_id: int) -> Group:
         return self.config.custom(self.MESSAGE_GROUP, channel_id, message_id)
+
+    async def get_all_message_configs(self) -> Group:
+        return await self.config.custom(self.MESSAGE_GROUP).all()
 
     def reload_translations(self):
         if self.previous_locale == get_locale():

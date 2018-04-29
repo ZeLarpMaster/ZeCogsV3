@@ -50,14 +50,22 @@ class ReactRoles:
         asyncio.ensure_future(self.process_role_queue())
 
     # Events
-    async def on_raw_reaction_add(self, emoji: discord.PartialEmoji, message_id: int, channel_id: int, user_id: int):
+    async def on_raw_reaction_add(self, payload):
+        emoji = payload.emoji
+        message_id = payload.message_id
+        channel_id = payload.channel_id
+        user_id = payload.user_id
         # noinspection PyBroadException
         try:
             await self.check_add_role(emoji, message_id, channel_id, user_id)
         except:  # To prevent the listener from exploding if an exception happens
             traceback.print_exc()
 
-    async def on_raw_reaction_remove(self, emoji: discord.PartialEmoji, message_id: int, channel_id: int, user_id: int):
+    async def on_raw_reaction_remove(self, payload):
+        emoji = payload.emoji
+        message_id = payload.message_id
+        channel_id = payload.channel_id
+        user_id = payload.user_id
         # noinspection PyBroadException
         try:
             await self.check_remove_role(emoji, message_id, channel_id, user_id)

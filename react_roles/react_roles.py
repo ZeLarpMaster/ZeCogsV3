@@ -10,12 +10,15 @@ import typing
 import hashlib
 
 from discord.ext import commands
+from discord.raw_models import RawReactionActionEvent
 from redbot.core import RedContext, Config, checks
 from redbot.core.config import Group
 from redbot.core.bot import Red
 from redbot.core.i18n import CogI18n, get_locale
 
 _ = CogI18n("ReactRoles", __file__)  # pygettext3 -a -n -p locales react_roles.py
+
+RawReactionParams = typing.Union[typing.Tuple[discord.PartialEmoji, int, int, int], RawReactionActionEvent]
 
 
 class ReactRoles:
@@ -50,14 +53,34 @@ class ReactRoles:
         asyncio.ensure_future(self.process_role_queue())
 
     # Events
-    async def on_raw_reaction_add(self, emoji: discord.PartialEmoji, message_id: int, channel_id: int, user_id: int):
+    async def on_raw_reaction_add(self, *args: RawReactionParams):
+        if len(args) == 1:
+            emoji = args[0].emoji
+            message_id = args[0].message_id
+            channel_id = args[0].channel_id
+            user_id = args[0].user_id
+        else:
+            emoji = args[0]
+            message_id = args[1]
+            channel_id = args[2]
+            user_id = args[3]
         # noinspection PyBroadException
         try:
             await self.check_add_role(emoji, message_id, channel_id, user_id)
         except:  # To prevent the listener from exploding if an exception happens
             traceback.print_exc()
 
-    async def on_raw_reaction_remove(self, emoji: discord.PartialEmoji, message_id: int, channel_id: int, user_id: int):
+    async def on_raw_reaction_remove(self, *args: RawReactionParams):
+        if len(args) == 1:
+            emoji = args[0].emoji
+            message_id = args[0].message_id
+            channel_id = args[0].channel_id
+            user_id = args[0].user_id
+        else:
+            emoji = args[0]
+            message_id = args[1]
+            channel_id = args[2]
+            user_id = args[3]
         # noinspection PyBroadException
         try:
             await self.check_remove_role(emoji, message_id, channel_id, user_id)

@@ -15,7 +15,7 @@ msgstr ""
 "X-Generator: Poedit 2.0.7\n"
 "Last-Translator: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: de_DE\n"
+"Language: de\n"
 
 #: birthdays.py:224
 msgid "Birthday List"
@@ -23,25 +23,23 @@ msgstr "Geburtstagsliste"
 
 #: birthdays.py:229
 msgid "<@!{}> is now **{} years old**. :tada:"
-msgstr "<@!{}> ist nunt **{} Jahre alt**. :tada:"
+msgstr "<@!{}> ist nun **{} Jahre alt**. :tada:"
 
 #: birthdays.py:230
 msgid "It's <@!{}>'s birthday today! :tada:"
-msgstr "Es ist <@!{]>s Geburtstag heute! :tada:"
+msgstr "Heute ist <@!{]>s Geburtstag! :tada:"
 
-# Translation may require some small reworking as I do not know what the exact output is suppose to look like - Sentry
 #: birthdays.py:231
 msgid ""
 ":white_check_mark: The birthday role on **{g}** has been set to: **{r}**."
 msgstr ""
-":white_check_mark: The Geburtstags Rolle am **{g}** wurde auf: **{r}** "
+":white_check_mark: Die Geburtstags Rolle auf **{g}** wurde zu: **{r}**"
 "gesetzt."
 
 #: birthdays.py:232
 msgid ":x: The birthday date you entered is invalid. It must be `MM-DD`."
 msgstr ":x: Das eingegebene Geburtsdatum ist ungültig. Es muss `MM-DD` sein."
 
-# Translation may be inaccurate as I do not know what the exact output is suppose to look like - Sentry
 #: birthdays.py:233
 msgid ":white_check_mark: Your birthday has been set to: **{}**."
 msgstr ":white_check_mark: Dein Geburtstag wurde auf: **{}** gesetzt."
@@ -51,7 +49,7 @@ msgid ""
 ":white_check_mark: The channel for announcing birthdays on **{g}** has been "
 "set to: **{c}**."
 msgstr ""
-":white_check_mark: Der Kanal zur bekanntgabe von Geburtstagen am **{g}** "
+":white_check_mark: Der Kanal zur Bekanntgabe von Geburtstagen auf **{g}** "
 "wurde auf: **{c}** gesetzt."
 
 #: birthdays.py:236

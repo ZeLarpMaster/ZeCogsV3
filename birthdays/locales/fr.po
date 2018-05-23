@@ -1,0 +1,59 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2018-05-22 22:28-0400\n"
+"PO-Revision-Date: 2018-05-22 22:32-0400\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 2.0.7\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: fr\n"
+
+#: birthdays.py:224
+msgid "Birthday List"
+msgstr "Liste d'anniversaires"
+
+#: birthdays.py:229
+msgid "<@!{}> is now **{} years old**. :tada:"
+msgstr "<@!{}> a maintenant **{} ans**. :tada:"
+
+#: birthdays.py:230
+msgid "It's <@!{}>'s birthday today! :tada:"
+msgstr "C'est l'anniversaire de <@!{}> aujourd'hui! :tada:"
+
+#: birthdays.py:231
+msgid ""
+":white_check_mark: The birthday role on **{g}** has been set to: **{r}**."
+msgstr ""
+":white_check_mark: Le rôle d'anniversaire sur le serveur **{g}** est "
+"maintenant: **{r}**."
+
+#: birthdays.py:232
+msgid ":x: The birthday date you entered is invalid. It must be `MM-DD`."
+msgstr ""
+":x: La date d'anniversaire que vous avez entrée est invalide. Ça doit être "
+"`MM-JJ`."
+
+#: birthdays.py:233
+msgid ":white_check_mark: Your birthday has been set to: **{}**."
+msgstr ":white_check_mark: Votre anniversaire est maintenant le **{}**."
+
+#: birthdays.py:234
+msgid ""
+":white_check_mark: The channel for announcing birthdays on **{g}** has been "
+"set to: **{c}**."
+msgstr ""
+":white_check_mark: Le salon d'annonce des anniversaires sur le serveur **{g}"
+"** est maintenant: **{c}**."
+
+#: birthdays.py:236
+msgid ":put_litter_in_its_place: Your birthday has been removed."
+msgstr ":put_litter_in_its_place: Votre date d'anniversaire a été retirée."

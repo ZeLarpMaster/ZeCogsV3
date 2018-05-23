@@ -27,7 +27,7 @@ msgstr ":x: Ungültiges Zeitformat."
 
 #: reminder.py:121
 msgid ":x: Too long amount of time. Maximum: {} total seconds"
-msgstr ":x: zu lange Zeitspanne. Maximum: {} Sekunden"
+msgstr ":x: Zu lange Zeitspanne. Maximum: {} Sekunden"
 
 #: reminder.py:122
 msgid ":white_check_mark: I will remind you in {} seconds."

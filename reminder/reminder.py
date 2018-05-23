@@ -1,13 +1,13 @@
-import asyncio
-import collections
-import datetime
-import hashlib
 import inspect
 import logging
-import re
 import typing
-
+import hashlib
+import re
+import collections
 import discord
+import datetime
+import asyncio
+
 from discord.ext import commands
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -65,7 +65,7 @@ class Reminder:
         else:
             user = message.author
             time_now = datetime.datetime.utcnow()
-            days, secs = divmod(seconds, 3600 * 24)
+            days, secs = divmod(seconds, 3600*24)
             end_time = time_now + datetime.timedelta(days=days, seconds=secs)
             reminder = {"content": text, "start_time": time_now.timestamp(), "end_time": end_time.timestamp()}
             async with self.config.user(user).reminders() as user_reminders:
@@ -86,8 +86,7 @@ class Reminder:
                 else:
                     time_diff = datetime.datetime.fromtimestamp(reminder["end_time"]) - datetime.datetime.utcnow()
                     time = max(0, time_diff.total_seconds())
-                    self.futures.append(
-                        asyncio.ensure_future(self.remind_later(user, time, reminder["content"], reminder)))
+                    self.futures.append(asyncio.ensure_future(self.remind_later(user, time, reminder["content"], reminder)))
 
     async def remind_later(self, user: discord.User, time: float, content: str, reminder):
         """Reminds the `user` in `time` seconds with a message containing `content`"""
@@ -136,5 +135,4 @@ class Reminder:
         for name, value in inspect.getmembers(self, lambda o: isinstance(o, commands.Command)):
             async def wrapped_reload(*_):
                 self.reload_translations()
-
             value.before_invoke(wrapped_reload)

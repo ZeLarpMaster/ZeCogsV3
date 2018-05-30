@@ -1,0 +1,34 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2018-05-22 21:01-0400\n"
+"PO-Revision-Date: 2018-05-23 18:30+0200\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 2.0.7\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: de\n"
+
+#: reminder.py:115
+msgid "Reminder"
+msgstr "Erinnerung"
+
+#: reminder.py:120
+msgid ":x: Invalid time format."
+msgstr ":x: Ungültiges Zeitformat."
+
+#: reminder.py:121
+msgid ":x: Too long amount of time. Maximum: {} total seconds"
+msgstr ":x: Zu lange Zeitspanne. Maximum: {} Sekunden"
+
+#: reminder.py:122
+msgid ":white_check_mark: I will remind you in {} seconds."
+msgstr ":white_check_mark: Ich werde dich in {} Sekunden daran erinnern."

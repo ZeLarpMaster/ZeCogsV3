@@ -98,8 +98,8 @@ class ReactRoles:
                         for emoji_str, role_id in msg_conf.items():
                             role = discord.utils.get(channel.guild.roles, id=role_id)
                             if role is not None:
-                                self.add_to_message_cache(channel_id, msg_id, msg)
-                                self.add_to_cache(channel.guild.id, channel_id, msg_id, emoji_str, role)
+                                self.add_to_message_cache(channel.id, msg.id, msg)
+                                self.add_to_cache(channel.guild.id, channel.id, msg.id, emoji_str, role)
                     else:
                         self.warn(lambda: self.LOG_MESSAGE_NOT_FOUND, msg_id=msg_id, channel=channel.mention)
             else:

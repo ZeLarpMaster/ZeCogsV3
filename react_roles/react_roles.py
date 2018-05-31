@@ -10,15 +10,14 @@ import typing
 import hashlib
 
 from discord.ext import commands
-from discord.raw_models import RawReactionActionEvent
-from redbot.core import RedContext, Config, checks
+from discord.raw_models import RawReactionActionEvent, RawMessageDeleteEvent, RawBulkMessageDeleteEvent
+from redbot.core import Config, checks
 from redbot.core.config import Group
 from redbot.core.bot import Red
-from redbot.core.i18n import CogI18n, get_locale
+from redbot.core.i18n import Translator, get_locale
+from redbot.core.commands import Context
 
-_ = CogI18n("ReactRoles", __file__)  # pygettext3 -a -n -p locales react_roles.py
-
-RawReactionParams = typing.Union[typing.Tuple[discord.PartialEmoji, int, int, int], RawReactionActionEvent]
+_ = Translator("ReactRoles", __file__)  # pygettext3 -a -n -p locales react_roles.py
 
 
 class ReactRoles:
@@ -53,48 +52,37 @@ class ReactRoles:
         asyncio.ensure_future(self.process_role_queue())
 
     # Events
-    async def on_raw_reaction_add(self, *args: RawReactionParams):
-        if len(args) == 1:
-            emoji = args[0].emoji
-            message_id = args[0].message_id
-            channel_id = args[0].channel_id
-            user_id = args[0].user_id
-        else:
-            emoji = args[0]
-            message_id = args[1]
-            channel_id = args[2]
-            user_id = args[3]
+    async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
+        emoji = payload.emoji
+        message_id = payload.message_id
+        channel_id = payload.channel_id
+        user_id = payload.user_id
         # noinspection PyBroadException
         try:
             await self.check_add_role(emoji, message_id, channel_id, user_id)
         except:  # To prevent the listener from exploding if an exception happens
             traceback.print_exc()
 
-    async def on_raw_reaction_remove(self, *args: RawReactionParams):
-        if len(args) == 1:
-            emoji = args[0].emoji
-            message_id = args[0].message_id
-            channel_id = args[0].channel_id
-            user_id = args[0].user_id
-        else:
-            emoji = args[0]
-            message_id = args[1]
-            channel_id = args[2]
-            user_id = args[3]
+    async def on_raw_reaction_remove(self, payload: RawReactionActionEvent):
+        emoji = payload.emoji
+        message_id = payload.message_id
+        channel_id = payload.channel_id
+        user_id = payload.user_id
         # noinspection PyBroadException
         try:
             await self.check_remove_role(emoji, message_id, channel_id, user_id)
         except:  # To prevent the listener from exploding if an exception happens
             traceback.print_exc()
 
-    async def on_raw_message_delete(self, message_id: int, channel_id: int):
-        message = self.get_from_message_cache(channel_id, message_id)
+    async def on_raw_message_delete(self, payload: RawMessageDeleteEvent):
+        message = self.get_from_message_cache(payload.channel_id, payload.message_id)
         if message is not None:
             await self.check_delete_message(message)
 
-    async def on_raw_bulk_message_delete(self, message_ids: typing.List[int], channel_id: int):
-        for message_id in message_ids:
-            await self.on_raw_message_delete(message_id, channel_id)
+    async def on_raw_bulk_message_delete(self, payload: RawBulkMessageDeleteEvent):
+        for message_id in payload.message_ids:
+            new_payload = {"id": message_id, "channel_id": payload.channel_id, "guild_id": payload.guild_id}
+            await self.on_raw_message_delete(new_payload)
 
     async def _init_bot_manipulation(self):
         await self.bot.wait_until_ready()
@@ -132,14 +120,14 @@ class ReactRoles:
     @commands.group(name="roles", invoke_without_command=True)
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
-    async def _roles(self, ctx: RedContext):
+    async def _roles(self, ctx: Context):
         """Roles giving configuration"""
         await ctx.send_help()
 
     @_roles.command(name="linklist")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
-    async def _roles_link_list(self, ctx: RedContext):
+    async def _roles_link_list(self, ctx: Context):
         """Lists all reaction links in the current server"""
         guild = ctx.guild
         server_links = await self.config.guild(guild).links()
@@ -157,7 +145,7 @@ class ReactRoles:
     @_roles.command(name="unlink")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
-    async def _roles_unlink(self, ctx: RedContext, name: str):
+    async def _roles_unlink(self, ctx: Context, name: str):
         """Remove a link of messages by its name"""
         guild = ctx.message.guild
         server_links = await self.config.guild(guild).links()
@@ -172,7 +160,7 @@ class ReactRoles:
     @_roles.command(name="link")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
-    async def _roles_link(self, ctx: RedContext, name: str, *linked_messages):
+    async def _roles_link(self, ctx: Context, name: str, *linked_messages):
         """Link messages together to allow only one role from those messages to be given to a member
 
         name is the name of the link; used to make removal easier
@@ -229,7 +217,7 @@ class ReactRoles:
     @_roles.command(name="add")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
-    async def _roles_add(self, ctx: RedContext, message_id: int, channel: discord.TextChannel, emoji, *,
+    async def _roles_add(self, ctx: Context, message_id: int, channel: discord.TextChannel, emoji, *,
                          role: discord.Role):
         """Add a role on a message
 
@@ -276,7 +264,7 @@ class ReactRoles:
     @_roles.command(name="remove")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
-    async def _roles_remove(self, ctx: RedContext, message_id: int, channel: discord.TextChannel, *,
+    async def _roles_remove(self, ctx: Context, message_id: int, channel: discord.TextChannel, *,
                             role: discord.Role):
         """Remove a role from a message
 
@@ -318,7 +306,7 @@ class ReactRoles:
     @_roles.command(name="check")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
-    async def _roles_check(self, ctx: RedContext, message_id: int, channel: discord.TextChannel):
+    async def _roles_check(self, ctx: Context, message_id: int, channel: discord.TextChannel):
         """Goes through all reactions of a message and gives the roles accordingly
 
         This does NOT work with messages in a link"""

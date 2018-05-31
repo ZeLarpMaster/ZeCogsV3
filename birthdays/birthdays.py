@@ -9,12 +9,13 @@ import discord
 import itertools
 
 from discord.ext import commands
-from redbot.core import Config, checks, RedContext
+from redbot.core import Config, checks
 from redbot.core.bot import Red
-from redbot.core.i18n import CogI18n, get_locale
+from redbot.core.i18n import Translator, get_locale
 from redbot.core.config import Group
+from redbot.core.commands import Context
 
-_ = CogI18n("Birthdays", __file__)
+_ = Translator("Birthdays", __file__)  # pygettext3 -a -n -p locales birthdays.py
 
 
 class Birthdays:
@@ -55,13 +56,13 @@ class Birthdays:
 
     # Commands
     @commands.group(pass_context=True, invoke_without_command=True)
-    async def bday(self, ctx: RedContext):
+    async def bday(self, ctx: Context):
         """Birthday settings"""
         await ctx.send_help()
 
     @bday.command(name="channel", pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_roles=True)
-    async def bday_channel(self, ctx: RedContext, channel: discord.TextChannel):
+    async def bday_channel(self, ctx: Context, channel: discord.TextChannel):
         """Sets the birthday announcement channel for this server"""
         message = ctx.message
         guild = message.guild
@@ -70,7 +71,7 @@ class Birthdays:
 
     @bday.command(name="role", pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_roles=True)
-    async def bday_role(self, ctx: RedContext, role: discord.Role):
+    async def bday_role(self, ctx: Context, role: discord.Role):
         """Sets the birthday role for this server"""
         message = ctx.message
         guild = message.guild
@@ -78,14 +79,14 @@ class Birthdays:
         await message.channel.send(self.ROLE_SET.format(g=guild.name, r=role.name))
 
     @bday.command(name="remove", aliases=["del", "clear", "rm"], pass_context=True)
-    async def bday_remove(self, ctx: RedContext):
+    async def bday_remove(self, ctx: Context):
         """Unsets your birthday date"""
         message = ctx.message
         await self.remove_user_bday(message.author.id)
         await message.channel.send(self.BDAY_REMOVED)
 
     @bday.command(name="set", pass_context=True)
-    async def bday_set(self, ctx: RedContext, date, year: int=None):
+    async def bday_set(self, ctx: Context, date, year: int=None):
         """Sets your birthday date
 
         The given date must be given as: MM-DD
@@ -104,7 +105,7 @@ class Birthdays:
             await channel.send(self.BDAY_SET.format(bday_month_str + " " + bday_day_str))
 
     @bday.command(name="list", pass_context=True)
-    async def bday_list(self, ctx: RedContext):
+    async def bday_list(self, ctx: Context):
         """Lists the birthdays
 
         If a user has their year set, it will display the age they'll get after their birthday this year"""

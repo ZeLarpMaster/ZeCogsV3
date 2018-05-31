@@ -12,8 +12,9 @@ from discord.ext import commands
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, get_locale
+from redbot.core.commands import Context
 
-_ = Translator("Reminder", __file__)
+_ = Translator("Reminder", __file__)  # pygettext3 -a -n -p locales reminder.py
 
 
 class Reminder:
@@ -48,7 +49,7 @@ class Reminder:
 
     # Commands
     @commands.command(pass_context=True)
-    async def remind(self, ctx, time, *, text):
+    async def remind(self, ctx: Context, time, *, text):
         """Remind yourself of something in a specific amount of time
 
         Examples for time: `5d`, `10m`, `10m30s`, `1h`, `1y1mo2w5d10h30m15s`

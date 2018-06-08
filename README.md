@@ -10,8 +10,8 @@ Try to find your answer in the [Frequently Asked Questions](#frequently-asked-qu
 If it's not there already, [open an issue](../../issues).
 
 # Contact
-You can find me on the [/r/RocketLeague Discord server](https://discord.gg/rocketleague).
-I'm ZeLarpMaster#0819 (or you can look for ZeTwiceMaster towards the top of the sidebar)
+You can find me on the [Red - Cog Support](https://discord.gg/GET4DVk).
+I'm ZeLarpMaster#0819
 
 # Frequently Asked Questions
 Nothing yet!

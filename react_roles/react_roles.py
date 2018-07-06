@@ -80,9 +80,10 @@ class ReactRoles:
             await self.check_delete_message(message)
 
     async def on_raw_bulk_message_delete(self, payload: RawBulkMessageDeleteEvent):
+        new_payload = {"channel_id": payload.channel_id, "guild_id": payload.guild_id}
         for message_id in payload.message_ids:
-            new_payload = {"id": message_id, "channel_id": payload.channel_id, "guild_id": payload.guild_id}
-            await self.on_raw_message_delete(new_payload)
+            new_payload["id"] = message_id
+            await self.on_raw_message_delete(RawMessageDeleteEvent(new_payload))
 
     async def _init_bot_manipulation(self):
         await self.bot.wait_until_ready()

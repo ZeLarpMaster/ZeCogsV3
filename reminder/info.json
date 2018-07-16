@@ -1,0 +1,10 @@
+{
+    "AUTHOR" : "ZeLarpMaster#0819",
+    "INSTALL_MSG" : "Enjoy reminding yourself of whatever you wanna remind yourself of!",
+    "NAME" : "Reminder",
+    "SHORT" : "Allows users to remind themselves about anything they want",
+    "DESCRIPTION" : "Lets users tell the bot to remind them about anything they want. There is no limit to how many reminders one user asks for.",
+    "TAGS" : ["remind"],
+    "REQUIREMENTS" : [],
+    "HIDDEN" : false
+}

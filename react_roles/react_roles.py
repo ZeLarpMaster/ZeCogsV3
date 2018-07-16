@@ -432,7 +432,6 @@ class ReactRoles:
                     self.role_queue.task_done()
                 finally:
                     await asyncio.sleep(self.PROCESSING_WAIT_TIME)
-        self.reload_translations()
         self.info(lambda: self.LOG_PROCESSING_LOOP_ENDED)
 
     # Utilities
@@ -519,8 +518,10 @@ class ReactRoles:
         return await self.config.custom(self.MESSAGE_GROUP).all()
 
     def reload_translations(self):
-        if self.previous_locale == get_locale():
+        new_locale = get_locale()
+        if self.previous_locale == new_locale:
             return  # Don't care if the locale hasn't changed
+        self.previous_locale = new_locale
 
         # Embed constants
         self.LINK_LIST_TITLE = _("Role Links")

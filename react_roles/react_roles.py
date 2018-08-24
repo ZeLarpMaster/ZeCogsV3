@@ -24,7 +24,7 @@ class ReactRoles:
     """Associate emojis on messages with roles to gain/lose roles when clicking on reactions
 
     RedBot V3 edition"""
-    __author__ = "ZeLarpMaster#0819"
+    __author__ = "ZeLarpMaster#0818"
 
     # Behavior related constants
     MAXIMUM_PROCESSED_PER_SECOND = 5

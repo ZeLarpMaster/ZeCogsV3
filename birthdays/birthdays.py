@@ -20,7 +20,7 @@ _ = Translator("Birthdays", __file__)  # pygettext3 -a -n -p locales birthdays.p
 
 class Birthdays:
     """Announces people's birthdays and gives them a birthday role for the whole UTC day"""
-    __author__ = "ZeLarpMaster#0819"
+    __author__ = "ZeLarpMaster#0818"
 
     # Behavior related constants
     DATE_GROUP = "DATE"

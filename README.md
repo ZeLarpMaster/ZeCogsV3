@@ -11,7 +11,7 @@ If it's not there already, [open an issue](../../issues).
 
 # Contact
 You can find me on the [Red - Cog Support](https://discord.gg/GET4DVk).
-I'm ZeLarpMaster#0819
+I'm ZeLarpMaster#0818
 
 # Frequently Asked Questions
 Nothing yet!

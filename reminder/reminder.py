@@ -19,7 +19,7 @@ _ = Translator("Reminder", __file__)  # pygettext3 -a -n -p locales reminder.py
 
 class Reminder:
     """Utilities to remind yourself of whatever you want"""
-    __author__ = "ZeLarpMaster#0819"
+    __author__ = "ZeLarpMaster#0818"
 
     # Behavior related constants
     TIME_AMNT_REGEX = re.compile("([1-9][0-9]*)([a-z]+)", re.IGNORECASE)

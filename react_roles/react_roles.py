@@ -9,7 +9,7 @@ import traceback
 import typing
 import hashlib
 
-from discord.ext import commands
+from redbot.core import commands
 from discord.raw_models import RawReactionActionEvent, RawMessageDeleteEvent, RawBulkMessageDeleteEvent
 from redbot.core import Config, checks
 from redbot.core.config import Group

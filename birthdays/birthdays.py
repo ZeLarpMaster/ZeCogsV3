@@ -8,7 +8,7 @@ import datetime
 import discord
 import itertools
 
-from discord.ext import commands
+from redbot.core import commands
 from redbot.core import Config, checks
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, get_locale

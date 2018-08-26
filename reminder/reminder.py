@@ -8,7 +8,7 @@ import discord
 import datetime
 import asyncio
 
-from discord.ext import commands
+from redbot.core import commands
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, get_locale

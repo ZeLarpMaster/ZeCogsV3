@@ -8,6 +8,7 @@ import re
 import traceback
 import typing
 import hashlib
+import collections
 
 from redbot.core import commands
 from discord.raw_models import RawReactionActionEvent, RawMessageDeleteEvent, RawBulkMessageDeleteEvent
@@ -88,6 +89,8 @@ class ReactRoles:
     async def _init_bot_manipulation(self):
         await self.bot.wait_until_ready()
 
+        counter = collections.Counter()
+
         # Caching roles
         channel_configs = await self.get_all_message_configs()
         for channel_id, channel_conf in channel_configs.items():
@@ -101,6 +104,7 @@ class ReactRoles:
                             if role is not None:
                                 self.add_to_message_cache(channel.id, msg.id, msg)
                                 self.add_to_cache(channel.guild.id, channel.id, msg.id, emoji_str, role)
+                                counter.update((channel.name, ))
                     else:
                         self.warn(lambda: self.LOG_MESSAGE_NOT_FOUND, msg_id=msg_id, channel=channel.mention)
             else:
@@ -116,6 +120,8 @@ class ReactRoles:
                     self.parse_links(guild_id, link_list.values())
             else:
                 self.warn(lambda: self.LOG_SERVER_NOT_FOUND, guild_id=guild_id)
+
+        self.info(lambda: self.LOG_BINDINGS, bindings=", ".join(": ".join(map(str, pair)) for pair in counter.items()))
 
     # Commands
     @commands.group(name="roles", invoke_without_command=True)
@@ -256,10 +262,17 @@ class ReactRoles:
                 except discord.HTTPException:  # Failed to find the emoji
                     response = self.EMOJI_NOT_FOUND
                 else:
-                    self.add_to_message_cache(channel.id, message_id, message)
-                    self.add_to_cache(guild.id, channel.id, message_id, emoji_id, role)
-                    await msg_conf.get_attr(emoji_id).set(role.id)
-                    response = self.ROLE_SUCCESSFULLY_BOUND.format(emoji or emoji_id, channel.mention)
+                    try:
+                        await ctx.message.author.add_roles(role)
+                        await ctx.message.author.remove_roles(role)
+                    except (discord.Forbidden, discord.HTTPException):
+                        response = self.CANT_GIVE_ROLE
+                        await message.remove_reaction(emoji or emoji_id, self.bot.user)
+                    else:
+                        self.add_to_message_cache(channel.id, message_id, message)
+                        self.add_to_cache(guild.id, channel.id, message_id, emoji_id, role)
+                        await msg_conf.get_attr(emoji_id).set(role.id)
+                        response = self.ROLE_SUCCESSFULLY_BOUND.format(emoji or emoji_id, channel.mention)
         await ctx.send(response)
 
     @_roles.command(name="remove")
@@ -532,6 +545,7 @@ class ReactRoles:
         self.LOG_CHANNEL_NOT_FOUND = _("Could not find channel {channel_id}.")
         self.LOG_SERVER_NOT_FOUND = _("Could not find server with id {guild_id}.")
         self.LOG_PROCESSING_LOOP_ENDED = _("The processing loop has ended.")
+        self.LOG_BINDINGS = _("Cached bindings: {bindings}")
 
         # Message constants
         self.PROGRESS_FORMAT = _("Checked {c} out of {r} reactions out of {t} emojis.")
@@ -563,6 +577,7 @@ Gave a total of {g} roles.""")
         self.UNLINK_SUCCESSFUL = _(":white_check_mark: The link has been removed from this server.")
         self.CANT_CHECK_LINKED = _(":x: Cannot run a check on linked messages.")
         self.REACTION_NOT_FOUND = _(":x: Could not find the reaction of that message.")
+        self.CANT_GIVE_ROLE = _(":x: I can't give that role! Maybe it's higher than my own highest role?")
 
     def log(self, logging_func: typing.Callable, *args, **kwargs):
         self.reload_translations()

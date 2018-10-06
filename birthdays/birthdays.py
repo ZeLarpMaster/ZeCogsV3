@@ -16,9 +16,10 @@ from redbot.core.config import Group
 from redbot.core.commands import Context
 
 _ = Translator("Birthdays", __file__)  # pygettext3 -a -n -p locales birthdays.py
+BaseCog = getattr(commands, "Cog", object)
 
 
-class Birthdays:
+class Birthdays(BaseCog):
     """Announces people's birthdays and gives them a birthday role for the whole UTC day"""
     __author__ = "ZeLarpMaster#0818"
 

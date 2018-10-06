@@ -15,9 +15,10 @@ from redbot.core.i18n import Translator, get_locale
 from redbot.core.commands import Context
 
 _ = Translator("Reminder", __file__)  # pygettext3 -a -n -p locales reminder.py
+BaseCog = getattr(commands, "Cog", object)
 
 
-class Reminder:
+class Reminder(BaseCog):
     """Utilities to remind yourself of whatever you want"""
     __author__ = "ZeLarpMaster#0818"
 

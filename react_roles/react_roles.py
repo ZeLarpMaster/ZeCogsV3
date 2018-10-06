@@ -19,9 +19,10 @@ from redbot.core.i18n import Translator, get_locale
 from redbot.core.commands import Context
 
 _ = Translator("ReactRoles", __file__)  # pygettext3 -a -n -p locales react_roles.py
+BaseCog = getattr(commands, "Cog", object)
 
 
-class ReactRoles:
+class ReactRoles(BaseCog):
     """Associate emojis on messages with roles to gain/lose roles when clicking on reactions
 
     RedBot V3 edition"""

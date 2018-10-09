@@ -30,8 +30,7 @@ msgid "It's <@!{}>'s birthday today! :tada:"
 msgstr "<@!{}> is vandaag jarig! :tada:"
 
 #: birthdays.py:231
-msgid ""
-":white_check_mark: The birthday role on **{g}** has been set to: **{r}**."
+msgid ":white_check_mark: The birthday role on **{g}** has been set to: **{r}**."
 msgstr ":white_check_mark: De verjaardagsrol **{g}** is gegeven aan **{r}**."
 
 #: birthdays.py:232
@@ -43,11 +42,9 @@ msgid ":white_check_mark: Your birthday has been set to: **{}**."
 msgstr ":white_check_mark: Je verjaardag is op: **{}**."
 
 #: birthdays.py:234
-msgid ""
-":white_check_mark: The channel for announcing birthdays on **{g}** has been "
+msgid ":white_check_mark: The channel for announcing birthdays on **{g}** has been "
 "set to: **{c}**."
-msgstr ""
-":white_check_mark: Het kanaal voor aankondigingen voor **{g}** is ingesteld "
+msgstr ":white_check_mark: Het kanaal voor aankondigingen voor **{g}** is ingesteld "
 "op **{c}**."
 
 #: birthdays.py:236

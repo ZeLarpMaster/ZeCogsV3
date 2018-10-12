@@ -1,6 +1,9 @@
 # ZeCogs V3
 My cogs repository for [Red-DiscordBot V3](https://github.com/Cog-Creators/Red-DiscordBot/tree/V3/master)
 
+## Requirements
+None!
+
 ## Want to help translating?
 Follow the steps found [here](TRANSLATING.md).
 

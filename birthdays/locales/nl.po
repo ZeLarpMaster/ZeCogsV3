@@ -23,7 +23,7 @@ msgstr "Verjaardagskalender"
 
 #: birthdays.py:229
 msgid "<@!{}> is now **{} years old**. :tada:"
-msgstr "<@!{}> is nu **{} jaar**. :tada:"
+msgstr "<@!{}> is nu **{} jaar oud**. :tada:"
 
 #: birthdays.py:230
 msgid "It's <@!{}>'s birthday today! :tada:"
@@ -31,21 +31,20 @@ msgstr "<@!{}> is vandaag jarig! :tada:"
 
 #: birthdays.py:231
 msgid ":white_check_mark: The birthday role on **{g}** has been set to: **{r}**."
-msgstr ":white_check_mark: De verjaardagsrol **{g}** is gegeven aan **{r}**."
+msgstr ":white_check_mark: **{r}** is ingesteld als de verjaardagsrol in **{g}**."
 
 #: birthdays.py:232
 msgid ":x: The birthday date you entered is invalid. It must be `MM-DD`."
-msgstr ":x: De datum is incorrect. Dit is het format: `MM-DD`."
+msgstr ":x: De ingevoerde verjaardagsdatum is incorrect. Gebruik dit formaat: `MM-DD`."
 
 #: birthdays.py:233
 msgid ":white_check_mark: Your birthday has been set to: **{}**."
-msgstr ":white_check_mark: Je verjaardag is op: **{}**."
+msgstr ":white_check_mark: **{}** is ingesteld als jouw verjaardag."
 
 #: birthdays.py:234
 msgid ":white_check_mark: The channel for announcing birthdays on **{g}** has been "
 "set to: **{c}**."
-msgstr ":white_check_mark: Het kanaal voor aankondigingen voor **{g}** is ingesteld "
-"op **{c}**."
+msgstr ":white_check_mark: **{c}** is ingesteld als het kanaal voor verjaardagsaankondigingen in **{g}**".
 
 #: birthdays.py:236
 msgid ":put_litter_in_its_place: Your birthday has been removed."

@@ -46,8 +46,6 @@ class Birthdays(BaseCog):
             while self == self.bot.get_cog(self.__class__.__name__):  # Stops the loop when the cog is reloaded
                 now = datetime.datetime.utcnow()
                 tomorrow = (now + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
-                await self.clean_yesterday_bdays()
-                await self.do_today_bdays()
                 await asyncio.sleep((tomorrow - now).total_seconds())
                 await self.clean_yesterday_bdays()
                 await self.do_today_bdays()

@@ -1,7 +1,6 @@
 {
-    "AUTHOR" : "ZeLarpMaster#0818",
-    "INSTALL_MSG" : "Thanks for using my cogs repository.\nIf you run into errors `delimited like this` or have suggestions, you can send me a PM on Discord.",
-    "NAME" : "ZeCogsV3",
-    "SHORT" : "Various cogs, mostly from the Rocket League Discord",
-    "DESCRIPTION" : "Various cogs including, but not limited to, voice channel locking, reaction-role associations, voice channel generation, timezone convertion, per-channel slowmode, and reminders."
+    "author" : ["ZeLarpMaster#0818"],
+    "install_msg" : "Thanks for using my cogs repository.\nIf you run into errors `delimited like this` or have suggestions, you can send me a PM on Discord.",
+    "short" : "Various cogs, mostly from the Rocket League Discord",
+    "description" : "Various cogs including, but not limited to, reaction-role associations and reminders."
 }

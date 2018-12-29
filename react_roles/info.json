@@ -1,10 +1,12 @@
 {
-    "AUTHOR" : "ZeLarpMaster#0818",
-    "INSTALL_MSG" : "Thanks for installing my role reactions cog and enjoy!\nTo get a message's ID you can right click a message and click Copy ID with the developer mode enabled.\nTo enable the developer go to Settings > Appearance > Advanced > Developer Mode",
-    "NAME" : "ReactRoles",
-    "SHORT" : "Associate reactions on messages with a role",
-    "DESCRIPTION" : "Associate reactions on messages with a role to give users a role when clicking the reaction or removing the role when they click again.",
-    "TAGS" : ["reaction", "role", "utility"],
-    "REQUIREMENTS" : [],
-    "HIDDEN" : false
+    "author" : ["ZeLarpMaster#0818"],
+    "description" : "Associate reactions on messages with a role to give users a role when clicking the reaction or removing the role when they click again.",
+    "install_msg" : "Thanks for installing my role reactions cog and enjoy!\nTo get a message's ID you can right click a message and click Copy ID with the developer mode enabled.\nTo enable the developer go to Settings > Appearance > Advanced > Developer Mode",
+    "short" : "Associate reactions on messages with a role",
+    "bot_version": [3, 0, 0],
+    "hidden": false,
+    "disabled": false,
+    "required_cogs": {},
+    "requirements" : [],
+    "tags" : ["reaction", "role", "utility"]
 }

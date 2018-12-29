@@ -14,12 +14,13 @@ from discord.raw_models import RawReactionActionEvent, RawMessageDeleteEvent, Ra
 from redbot.core import Config, checks
 from redbot.core.config import Group
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator
+from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.commands import Context, Cog
 
-_ = Translator("ReactRoles", __file__)  # pygettext3 -a -n -p locales react_roles.py
+_ = Translator("ReactRoles", __file__)  # pygettext3 -D -n -p locales react_roles.py
 
 
+@cog_i18n(_)
 class ReactRoles(Cog):
     """Associate emojis on messages with roles to gain/lose roles when clicking on reactions
 

@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-12-29 10:43-0500\n"
-"PO-Revision-Date: 2018-12-29 10:45-0500\n"
+"POT-Creation-Date: 2018-12-29 10:46-0500\n"
+"PO-Revision-Date: 2018-12-29 11:00-0500\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -17,59 +17,109 @@ msgstr ""
 "X-Generator: Poedit 2.2\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: react_roles.py:89
+#: react_roles.py:25
+msgid ""
+"Associate emojis on messages with roles to gain/lose roles when clicking on "
+"reactions\n"
+"\n"
+"    RedBot V3 edition"
+msgstr ""
+"Associe des émojis à des messages avec des rôles pour gagner/perdre des "
+"rôles en cliquant sur des réactions\n"
+"\n"
+"    Édition RedBot V3"
+
+#: react_roles.py:90
 msgid "Could not find message {msg_id} in {channel}."
 msgstr "Le message {msg_id} dans {channel} est introuvable."
 
-#: react_roles.py:92
+#: react_roles.py:93
 msgid "Could not find channel {channel_id}."
 msgstr "Le salon {channel_id} est introuvable."
 
-#: react_roles.py:103
+#: react_roles.py:104
 msgid "Could not find server with id {guild_id}."
 msgstr "Le serveur avec id {guild_id} est introuvable."
 
-#: react_roles.py:106
+#: react_roles.py:107
 msgid "Cached bindings: {bindings}"
 msgstr "Assignations en cache: {bindings}"
 
-#: react_roles.py:123
+#: react_roles.py:114
+msgid "Roles giving configuration"
+msgstr "Configuration pour assigner des rôles"
+
+#: react_roles.py:121
+msgid "Lists all reaction links in the current server"
+msgstr "Liste tous les liens de réactions sur le serveur actuel"
+
+#: react_roles.py:124
 msgid "Role Links"
 msgstr "Liens de rôle"
 
-#: react_roles.py:131
+#: react_roles.py:132
 msgid "There are no links in this server"
 msgstr "Il n’y a pas de liens dans ce serveur"
 
-#: react_roles.py:143
+#: react_roles.py:139
+msgid "Remove a link of messages by its name"
+msgstr "Supprime un lien de messages par son nom"
+
+#: react_roles.py:144
 msgid ":x: Could not find a link with that name in this server."
 msgstr ":x: Ce nom de lien est introuvable sur ce serveur-ci."
 
-#: react_roles.py:146
+#: react_roles.py:147
 msgid ":white_check_mark: The link has been removed from this server."
 msgstr ":white_check_mark: Le lien a été supprimé du serveur."
 
-#: react_roles.py:184
+#: react_roles.py:154
+msgid ""
+"Link messages together to allow only one role from those messages to be "
+"given to a member\n"
+"\n"
+"        name is the name of the link; used to make removal easier\n"
+"        linked_messages is an arbitrary number of channelid-messageid\n"
+"        You can get those channelid-messageid pairs with a right click on "
+"messages and shift + click on \"Copy ID\"\n"
+"        Users can only get one role out of all the reactions in the linked "
+"messages\n"
+"        The bot will NOT remove the user's other reaction(s) when clicking "
+"within linked messages"
+msgstr ""
+"Lie des messages ensemble pour permettre seulement un rôle de ces messages à "
+"être assigné à un membre\n"
+"\n"
+"        name est le nom du lien; utilisé pour l'identifier plus facilement\n"
+"        linked_messages est un nombre de idsalon-idmessage arbitraire\n"
+"        Vous pouvez obtenir ces paires idsalon-idmessage avec un clic droit "
+"sur un message puis avec un Maj + Clic sur \"Copier l'identifiant\"\n"
+"        Les utilisateurs peuvent seulement obtenir un seul rôle à partir de "
+"toutes les réactions sur les messages liés\n"
+"        Le bot ne vas PAS retirer les autres réactions de l'utilisateur "
+"lorsqu'il clique sur les réactions d'un message lié"
+
+#: react_roles.py:185
 msgid "You must specify at least one message to be linked."
 msgstr "Vous devez spécifier au moins un message à lier."
 
-#: react_roles.py:186
+#: react_roles.py:187
 msgid "The following channel-message pairs were invalid: {}\n"
 msgstr "Les paires de salon-message suivantes sont invalides: {}\n"
 
-#: react_roles.py:189
+#: react_roles.py:190
 msgid "The following channels weren't found: {}\n"
 msgstr "Les salons suivants sont introuvables: {}\n"
 
-#: react_roles.py:192
+#: react_roles.py:193
 msgid "The following messages weren't found: {}\n"
 msgstr "Les messages suivants sont introuvables: {}\n"
 
-#: react_roles.py:195
+#: react_roles.py:196
 msgid ":x: Failed to link reactions.\n"
 msgstr ":x: La liaison des réactions a échoué.\n"
 
-#: react_roles.py:201
+#: react_roles.py:202
 msgid ""
 ":x: That link name is already used in the current server. Remove it before "
 "assigning to it."
@@ -77,23 +127,43 @@ msgstr ""
 ":x: Ce nom de lien est déjà utilisé dans ce serveur-ci. Supprimez-le avant "
 "de réassigner au même nom."
 
-#: react_roles.py:206
+#: react_roles.py:207
 msgid ":white_check_mark: Successfully linked the reactions."
 msgstr ":white_check_mark: Les réactions ont été liées avec succès."
 
-#: react_roles.py:224 react_roles.py:322
+#: react_roles.py:215
+msgid ""
+"Add a role on a message\n"
+"\n"
+"        `message_id` must be found in `channel`\n"
+"            To get a message's id: Settings > Appearance > Developer mode "
+"then\n"
+"            Right click a message > Copy ID\n"
+"        `emoji` can either be a Unicode emoji or a server emote\n"
+"        `role` must be found in the channel's server"
+msgstr ""
+"Ajoute un rôle sur un message\n"
+"\n"
+"        `message_id` doit être trouvé dans `channel`\n"
+"            Pour obtenir le id d'un message: Paramètres > Apparence > Mode "
+"développeur, puis\n"
+"            Clic droit sur un message > Copier l'identifiant\n"
+"        `emoji` peut être un émoji Unicode ou un émoji de serveur\n"
+"        `role` doit être trouvé sur le serveur du salon « channel » donné"
+
+#: react_roles.py:225 react_roles.py:323
 msgid ":x: Message not found."
 msgstr ":x: Message introuvable."
 
-#: react_roles.py:226
+#: react_roles.py:227
 msgid ":x: The channel must be in a server."
 msgstr ":x: Le salon doit être dans un serveur."
 
-#: react_roles.py:228
+#: react_roles.py:229
 msgid ":x: Role not found on the given channel's server."
 msgstr ":x: Le rôle n'a pas été trouvé dans le serveur du salon donné."
 
-#: react_roles.py:230
+#: react_roles.py:231
 msgid ""
 ":x: I don't have the permission to manage users' roles in the channel's "
 "server."
@@ -101,38 +171,55 @@ msgstr ""
 ":x: Je n'ai pas la permission de gérer les rôles dans le serveur du salon "
 "donné."
 
-#: react_roles.py:232
+#: react_roles.py:233
 msgid ":x: I don't have the permission to add reactions in that channel."
 msgstr ":x: Je n'ai pas la permission d'ajouter des réactions dans ce salon."
 
-#: react_roles.py:238
+#: react_roles.py:239
 msgid ":x: The emoji is already bound on that message."
 msgstr ":x: Cet emoji est déjà assigné à ce message."
 
-#: react_roles.py:248
+#: react_roles.py:249
 msgid ":x: Emoji not found in any of my servers or in unicode emojis."
 msgstr ""
 ":x: L'emoji est introuvable dans mes serveurs ou dans les emojis Unicode."
 
-#: react_roles.py:251 react_roles.py:252
+#: react_roles.py:252 react_roles.py:253
 msgid "Testing permissions"
 msgstr "Essai des permissions"
 
-#: react_roles.py:254
+#: react_roles.py:255
 msgid ":x: I can't give that role! Maybe it's higher than my own highest role?"
 msgstr ""
 ":x: Je ne peux pas donner ce rôle! Il est peut-être plus haut que mon rôle "
 "le plus haut?"
 
-#: react_roles.py:259
+#: react_roles.py:260
 msgid ":white_check_mark: The role has been bound to {} on the message in {}."
 msgstr ":white_check_mark: Le rôle a été assigné à {} sur le message dans {}."
 
-#: react_roles.py:278
+#: react_roles.py:269
+msgid ""
+"Remove a role from a message\n"
+"\n"
+"        `message_id` must be found in `channel` and be bound to `role`\n"
+"            To get a message's id: Settings > Appearance > Developer mode "
+"then\n"
+"            Right click a message > Copy ID"
+msgstr ""
+"Retire un rôle d'un message\n"
+"\n"
+"        `message_id` doit être trouvé dans `channel` et être associé à "
+"`role`\n"
+"            Pour obtenir le id d'un message: Paramètres > Apparence > Mode "
+"développeur, puis\n"
+"            Clic droit sur un message > Copier l'identifiant"
+
+#: react_roles.py:279
 msgid ":x: The role is not bound to that message."
 msgstr ":x: Le rôle n'est pas assigné à ce message."
 
-#: react_roles.py:286
+#: react_roles.py:287
 msgid ""
 ":put_litter_in_its_place: Unbound the role on the message.\n"
 ":x: Message not found."
@@ -140,7 +227,7 @@ msgstr ""
 ":put_litter_in_its_place: Le rôle a été désassigné du message.\n"
 ":x: Message introuvable."
 
-#: react_roles.py:291
+#: react_roles.py:292
 msgid ""
 ":put_litter_in_its_place: Unbound the role on the message.\n"
 ":x: Could not find the reaction of that message."
@@ -148,7 +235,7 @@ msgstr ""
 ":put_litter_in_its_place: Le rôle a été désassigné du message.\n"
 ":x: La réaction est introuvable sur ce message."
 
-#: react_roles.py:294
+#: react_roles.py:295
 msgid ""
 ":put_litter_in_its_place: Unbound the role on the message.\n"
 "Removing linked reactions..."
@@ -156,7 +243,7 @@ msgstr ""
 ":put_litter_in_its_place: Le rôle a été désassigné du message.\n"
 "Retrait des réactions liées..."
 
-#: react_roles.py:304
+#: react_roles.py:305
 msgid ""
 ":put_litter_in_its_place: Unbound the role on the message.\n"
 "Removed **{} / {}** reactions..."
@@ -164,7 +251,7 @@ msgstr ""
 ":put_litter_in_its_place: Le rôle a été désassigné du message.\n"
 "**{} / {}** réactions ont été retirées..."
 
-#: react_roles.py:306
+#: react_roles.py:307
 msgid ""
 ":put_litter_in_its_place: Unbound the role on the message.\n"
 "Removed **{}** reactions."
@@ -172,23 +259,35 @@ msgstr ""
 ":put_litter_in_its_place: Le rôle a été désassigné du message.\n"
 "**{}** réactions ont été retirées."
 
-#: react_roles.py:320
+#: react_roles.py:314
+msgid ""
+"Goes through all reactions of a message and gives the roles accordingly\n"
+"\n"
+"        This does NOT work with messages in a link"
+msgstr ""
+"Passe au travers de toutes les réactions d'un message et assigne les rôles "
+"en conséquence\n"
+"\n"
+"        Cette fonctionnalité n'est PAS disponible pour les messages avec des "
+"liens"
+
+#: react_roles.py:321
 msgid ":x: Cannot run a check on linked messages."
 msgstr ":x: Il est impossible de vérifier des messages liés."
 
-#: react_roles.py:326
+#: react_roles.py:327
 msgid "Requesting members..."
 msgstr "Requête des membres..."
 
-#: react_roles.py:328
+#: react_roles.py:329
 msgid "Initializing..."
 msgstr "Initialisation..."
 
-#: react_roles.py:333
+#: react_roles.py:334
 msgid "Checked {c} out of {r} reactions out of {t} emojis."
 msgstr "{c} sur {r} réactions on été vérifiées sur {t} emojis."
 
-#: react_roles.py:358
+#: react_roles.py:359
 msgid ""
 ":white_check_mark: Completed! Checked a total of {c} reactions.\n"
 "Gave a total of {g} roles."
@@ -196,13 +295,40 @@ msgstr ""
 ":white_check_mark: Terminé! Un total de {c} réactions on été vérifiées.\n"
 "{g} rôles ont été attribués."
 
-#: react_roles.py:412
+#: react_roles.py:413
 msgid "Added a reaction"
 msgstr "Ajout d'une réaction"
 
-#: react_roles.py:419
+#: react_roles.py:420
 msgid "Removed a reaction"
 msgstr "Retrait d'une réaction"
+
+#: react_roles.py:432
+msgid ""
+"Parses the links of a server into self.links\n"
+"        links_list is a list of links each link being a list of channel."
+"id_message.id linked together"
+msgstr ""
+
+#: react_roles.py:453
+msgid "Adds an entry to the role cache"
+msgstr ""
+
+#: react_roles.py:459
+msgid "Fetches all role ids from a given message returns an iterable"
+msgstr ""
+
+#: react_roles.py:463
+msgid "Fetches the role id associated with an emoji on the given message"
+msgstr ""
+
+#: react_roles.py:467
+msgid "Removes an entry from the role cache"
+msgstr ""
+
+#: react_roles.py:477
+msgid "Removes a message from the role cache"
+msgstr ""
 
 #~ msgid "The processing loop has ended."
 #~ msgstr "La boucle de traitement s'est terminée."

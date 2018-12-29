@@ -41,41 +41,27 @@ class ReactRoles(Cog):
         unique_id = int(hashlib.sha512((self.__author__ + "@" + self.__class__.__name__).encode()).hexdigest(), 16)
         self.config = Config.get_conf(self, identifier=unique_id)
         self.config.register_guild(links={})
-        self.role_queue = asyncio.Queue()
-        self.role_map = {}
         self.role_cache = {}
-        self.links = {}  # {server.id: {channel.id_message.id: [role]}}
-        self.message_cache = {}  # {channel.id_message.id: message}
+        self.links = {}  # {server.id: {channel.id_message.id: [role_id]}}
         asyncio.ensure_future(self._init_bot_manipulation())
-        asyncio.ensure_future(self.process_role_queue())
 
     # Events
     async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
-        emoji = payload.emoji
-        message_id = payload.message_id
-        channel_id = payload.channel_id
-        user_id = payload.user_id
         # noinspection PyBroadException
         try:
-            await self.check_add_role(emoji, message_id, channel_id, user_id)
+            await self.check_add_role(payload)
         except:  # To prevent the listener from exploding if an exception happens
             traceback.print_exc()
 
     async def on_raw_reaction_remove(self, payload: RawReactionActionEvent):
-        emoji = payload.emoji
-        message_id = payload.message_id
-        channel_id = payload.channel_id
-        user_id = payload.user_id
         # noinspection PyBroadException
         try:
-            await self.check_remove_role(emoji, message_id, channel_id, user_id)
+            await self.check_remove_role(payload)
         except:  # To prevent the listener from exploding if an exception happens
             traceback.print_exc()
 
     async def on_raw_message_delete(self, payload: RawMessageDeleteEvent):
-        message = self.get_from_message_cache(payload.channel_id, payload.message_id)
-        if message is not None:
-            await self.check_delete_message(message)
+        await self.check_delete_message(payload)
 
     async def on_raw_bulk_message_delete(self, payload: RawBulkMessageDeleteEvent):
         new_payload = {"channel_id": payload.channel_id, "guild_id": payload.guild_id}
@@ -97,11 +83,8 @@ class ReactRoles(Cog):
                     msg = await self.safe_get_message(channel, msg_id)
                     if msg is not None:
                         for emoji_str, role_id in msg_conf.items():
-                            role = discord.utils.get(channel.guild.roles, id=role_id)
-                            if role is not None:
-                                self.add_to_message_cache(channel.id, msg.id, msg)
-                                self.add_to_cache(channel.guild.id, channel.id, msg.id, emoji_str, role)
-                                counter.update((channel.name,))
+                            self.add_to_cache(channel.guild.id, channel.id, msg.id, emoji_str, role_id)
+                            counter.update((channel.name,))
                     else:
                         self.logger.warning(_("Could not find message {msg_id} in {channel}.").format(
                             msg_id=msg_id, channel=channel.mention))
@@ -265,14 +248,13 @@ class ReactRoles(Cog):
                     response = _(":x: Emoji not found in any of my servers or in unicode emojis.")
                 else:
                     try:
-                        await ctx.message.author.add_roles(role)
-                        await ctx.message.author.remove_roles(role)
+                        await ctx.message.author.add_roles(role, reason=_("Testing permissions"))
+                        await ctx.message.author.remove_roles(role, reason=_("Testing permissions"))
                     except (discord.Forbidden, discord.HTTPException):
                         response = _(":x: I can't give that role! Maybe it's higher than my own highest role?")
                         await message.remove_reaction(emoji or emoji_id, self.bot.user)
                     else:
-                        self.add_to_message_cache(channel.id, message_id, message)
-                        self.add_to_cache(guild.id, channel.id, message_id, emoji_id, role)
+                        self.add_to_cache(guild.id, channel.id, message_id, emoji_id, role.id)
                         await msg_conf.get_attr(emoji_id).set(role.id)
                         response = _(":white_check_mark: The role has been bound to {} on the message in {}.").format(
                             emoji or emoji_id, channel.mention)
@@ -297,8 +279,8 @@ class ReactRoles(Cog):
         else:
             emoji_str = emoji_config[0]
             await msg_config.get_attr(emoji_str).clear()
-            self.remove_from_message_cache(channel.id, message_id)
             self.remove_role_from_cache(guild.id, channel.id, message_id, emoji_str)
+            self.get_link(guild.id, channel.id, message_id).difference_update({role.id})
             msg = await self.safe_get_message(channel, message_id)
             if msg is None:
                 await ctx.send(_(":put_litter_in_its_place: Unbound the role on the message.\n:x: Message not found."))
@@ -341,7 +323,9 @@ class ReactRoles(Cog):
         else:
             msg_conf = self.get_message_config(channel.id, message_id)
             if await msg_conf(...) is not ...:
-                progress_msg = await ctx.send(_("Initializing..."))
+                progress_msg = await ctx.send(_("Requesting members..."))
+                await self.bot.request_offline_members(guild)
+                progress_msg.edit(content=_("Initializing..."))
                 given_roles = 0
                 checked_count = 0
                 total_count = sum(map(lambda r: r.count, msg.reactions)) - len(msg.reactions)  # Remove the bot's
@@ -350,18 +334,18 @@ class ReactRoles(Cog):
                 for react in msg.reactions:  # Go through all reactions on the message and add the roles if needed
                     total_reactions += 1
                     emoji_str = str(react.emoji.id) if react.custom_emoji else react.emoji
-                    role = self.get_from_cache(guild.id, channel.id, message_id, emoji_str)
-                    if role is not None:
+                    role_id = self.get_from_cache(guild.id, channel.id, message_id, emoji_str)
+                    if role_id is not None:
                         before = 0
                         after = None
                         user = None
                         while before != after:
                             before = after
                             async for user in react.users(after=after):
-                                member = guild.get_member(user.id)
+                                member: discord.Member = guild.get_member(user.id)
                                 if member is not None and member != self.bot.user and \
-                                        discord.utils.get(member.roles, id=role.id) is None:
-                                    await member.add_roles(role)
+                                        discord.utils.get(member.roles, id=role_id) is None:
+                                    await self.add_role(guild.id, user.id, role_id)
                                     given_roles += 1
                                 checked_count += 1
                             after = user
@@ -376,87 +360,40 @@ class ReactRoles(Cog):
                 await progress_msg.edit(content=content)
 
     # Utilities
-    async def check_add_role(self, emoji: discord.PartialEmoji, message_id: int, channel_id: int, user_id: int):
-        message = self.get_from_message_cache(channel_id, message_id)
-        if message is not None:
-            guild = message.guild
-            emoji_str = str(emoji.id) if emoji.is_custom_emoji() else emoji.name
-            role = self.get_from_cache(guild.id, channel_id, message_id, emoji_str)
-            member = guild.get_member(user_id)
-            if member is not None and member != guild.me and role is not None:
-                await self.add_role_queue(member, role, True,
-                                          linked_roles=self.get_link(guild.id, channel_id, message_id))
+    async def check_add_role(self, payload: discord.RawReactionActionEvent):
+        emoji_str = str(payload.emoji.id) if payload.emoji.is_custom_emoji() else payload.emoji.name
+        role_id = self.get_from_cache(payload.guild_id, payload.channel_id, payload.message_id, emoji_str)
+        if role_id is not None and payload.user_id != self.bot.user.id:
+            linked_roles = self.get_link(payload.guild_id, payload.channel_id, payload.message_id)
+            for r_id in linked_roles - {role_id}:
+                await self.remove_role(payload.guild_id, payload.user_id, r_id)
+            await self.add_role(payload.guild_id, payload.user_id, role_id)
 
-    async def check_remove_role(self, emoji: discord.PartialEmoji, message_id: int, channel_id: int, user_id: int):
-        message = self.get_from_message_cache(channel_id, message_id)
-        if message is not None:
-            guild = message.guild
-            if user_id == guild.me.id:  # Safeguard in case a mod removes the bot's reaction by accident
-                await message.add_reaction(emoji)
+    async def check_remove_role(self, payload: discord.RawReactionActionEvent):
+        emoji_str = str(payload.emoji.id) if payload.emoji.is_custom_emoji() else payload.emoji.name
+        role_id = self.get_from_cache(payload.guild_id, payload.channel_id, payload.message_id, emoji_str)
+        if role_id is not None:
+            if payload.user_id == self.bot.user.id:  # Safeguard in case a mod removes the bot's reaction by accident
+                await self.bot.http.add_reaction(payload.message_id, payload.channel_id, emoji_str)
             else:
-                emoji_str = str(emoji.id) if emoji.is_custom_emoji() else emoji.name
-                member = guild.get_member(user_id)
-                role = self.get_from_cache(guild.id, channel_id, message_id, emoji_str)
-                if role is not None:
-                    await self.add_role_queue(member, role, False)
+                await self.remove_role(payload.guild_id, payload.user_id, role_id)
 
-    async def check_delete_message(self, message: discord.Message):
-        guild = message.guild
-        channel = message.channel
+    async def check_delete_message(self, payload: discord.RawMessageDeleteEvent):
         # Remove the message's config
-        message_conf = self.get_message_config(channel.id, message.id)
+        message_conf = self.get_message_config(payload.channel_id, payload.message_id)
         if await message_conf(...) is not ...:  # Because for whatever reason this returns {} instead of None
             await message_conf.clear()
         # And the caches
-        self.remove_from_message_cache(channel.id, message.id)
-        self.remove_message_from_cache(guild.id, channel.id, message.id)
+        self.remove_message_from_cache(payload.guild_id, payload.channel_id, payload.message_id)
         # And the links' cache
-        pair = str(channel.id) + "_" + str(message.id)
-        if pair in self.links.get(guild.id, {}):
-            del self.links[guild.id][pair]
+        pair = str(payload.channel_id) + "_" + str(payload.message_id)
+        if pair in self.links.get(payload.guild_id, {}):
+            del self.links[payload.guild_id][pair]
         # And the links' config
-        async with self.config.guild(guild).links({}) as server_links:
+        async with self.get_guild_config(payload.guild_id).links({}) as server_links:
             for links in server_links.values():
                 if pair in links:
                     links.remove(pair)
-
-    async def add_role_queue(self, member: discord.Member, role: discord.Role, add_bool: bool, *,
-                             linked_roles: set = None):
-        linked_roles = set() if linked_roles is None else linked_roles
-        key = "{}_{}".format(member.guild.id, member.id)
-        q = self.role_map.get(key)
-        if q is None:  # True --> add   False --> remove
-            # Always remove the @everyone role to prevent the bot from trying to give it to members
-            q = {True: set(), False: {member.guild.default_role}, "mem": member}
-            await self.role_queue.put(key)
-        q[True].difference_update(linked_roles)  # Remove the linked roles from the roles to add
-        q[False].update(linked_roles)  # Add the linked roles to remove them if the user has any of them
-        q[not add_bool] -= {role}
-        q[add_bool] |= {role}
-        self.role_map[key] = q
-
-    async def process_role_queue(self):  # This exists to update multiple roles at once when possible
-        """Loops until the cog is unloaded and processes the role assignments when it can"""
-        await self.bot.wait_until_ready()
-        while self == self.bot.get_cog(self.__class__.__name__):
-            key = await self.role_queue.get()
-            q = self.role_map.pop(key)
-            if q is not None and q.get("mem") is not None:
-                mem = q["mem"]
-                all_roles = set(mem.roles)
-                add_set = q.get(True, set())
-                del_set = q.get(False, {mem.guild.default_role})
-                try:
-                    # Basically, the user's roles + the added - the removed
-                    await mem.edit(roles=((all_roles | add_set) - del_set))
-                except (discord.Forbidden, discord.HTTPException):
-                    self.role_map[key] = q  # Try again when it fails
-                    await self.role_queue.put(key)
-                else:
-                    self.role_queue.task_done()
-                finally:
-                    await asyncio.sleep(self.PROCESSING_WAIT_TIME)
-        self.logger.info(_("The processing loop has ended."))
 
     # Utilities
     async def safe_get_message(self, channel: discord.TextChannel, message_id: typing.Union[str, int]) \
@@ -466,6 +403,25 @@ class ReactRoles(Cog):
         except (discord.NotFound, discord.Forbidden, discord.HTTPException):
             result = None
         return result
+
+    # For working with the pain that raw events are
+    # Thanks lib devs for having 0 methods which take ids even though that's the only thing ever used at the end
+    async def add_role(self, guild_id: int, user_id: int, role_id: int):
+        # noinspection PyBroadException
+        try:
+            await self.bot.http.add_role(guild_id, user_id, role_id, reason=_("Added a reaction"))
+        except:  # Prevent explosion, but still log error
+            traceback.print_exc()
+
+    async def remove_role(self, guild_id: int, user_id: int, role_id: int):
+        # noinspection PyBroadException
+        try:
+            await self.bot.http.remove_role(guild_id, user_id, role_id, reason=_("Removed a reaction"))
+        except:  # Prevent explosion, but still log error
+            traceback.print_exc()
+
+    def get_guild_config(self, guild_id: int) -> Group:
+        return self.config.guild(discord.Guild(data={"id": guild_id}, state=None))
 
     # Links
     def get_link(self, server_id: int, channel_id: int, message_id: int) -> set:
@@ -488,24 +444,22 @@ class ReactRoles(Cog):
             entry_list = entries.get(name, [])
             link_dict = self.links.get(guild.id, {})
             for entry in entry_list:
-                if entry in link_dict:
-                    del link_dict[entry]
+                link_dict.pop(entry, None)
             del entries[name]
 
-    # Cache -- Needed to keep the actual role object in cache instead of looking for it every time in the server's roles
-    def add_to_cache(self, server_id: int, channel_id: int, message_id: int, emoji_str: str, role: discord.Role):
+    # Cache -- Needed to keep role ids in cache instead of accessing the config everytime
+    def add_to_cache(self, server_id: int, channel_id: int, message_id: int, emoji_str: str, role_id: int):
         """Adds an entry to the role cache"""
         self.role_cache.setdefault(server_id, {}) \
             .setdefault(channel_id, {}) \
-            .setdefault(message_id, {})[emoji_str] = role
+            .setdefault(message_id, {})[emoji_str] = role_id
 
-    def get_all_roles_from_message(self, server_id: int, channel_id: int, message_id: int) \
-            -> typing.Iterable[discord.Role]:
-        """Fetches all roles from a given message returns an iterable"""
+    def get_all_roles_from_message(self, server_id: int, channel_id: int, message_id: int) -> typing.Iterable[int]:
+        """Fetches all role ids from a given message returns an iterable"""
         return self.role_cache.get(server_id, {}).get(channel_id, {}).get(message_id, {}).values()
 
-    def get_from_cache(self, server_id: int, channel_id: int, message_id: int, emoji_str: str) -> discord.Role:
-        """Fetches the role associated with an emoji on the given message"""
+    def get_from_cache(self, server_id: int, channel_id: int, message_id: int, emoji_str: str) -> int:
+        """Fetches the role id associated with an emoji on the given message"""
         return self.role_cache.get(server_id, {}).get(channel_id, {}).get(message_id, {}).get(emoji_str)
 
     def remove_role_from_cache(self, server_id: int, channel_id: int, message_id: int, emoji_str: str):
@@ -525,15 +479,6 @@ class ReactRoles(Cog):
             channel_conf = server_conf.get(channel_id)
             if channel_conf is not None and message_id in channel_conf:
                 del channel_conf[message_id]
-
-    def add_to_message_cache(self, channel_id: int, message_id: int, message: discord.Message):
-        self.message_cache["{}_{}".format(channel_id, message_id)] = message
-
-    def get_from_message_cache(self, channel_id: int, message_id: int) -> discord.Message:
-        return self.message_cache.get("{}_{}".format(channel_id, message_id))
-
-    def remove_from_message_cache(self, channel_id: int, message_id: int):
-        self.message_cache.pop("{}_{}".format(channel_id, message_id), None)
 
     def get_message_config(self, channel_id: int, message_id: int) -> Group:
         return self.config.custom(self.MESSAGE_GROUP, str(channel_id), str(message_id))

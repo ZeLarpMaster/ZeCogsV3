@@ -494,7 +494,7 @@ class ReactRoles(Cog):
             result = None
         return result
 
-    # Provided by <@78631113035100160>, modified by me because it didn't run
+    # Provided by <@78631113035100160>
     async def maybe_update_guild(self, guild: discord.Guild):
         # ctx.guild.chunked is innaccurate, discord.py#1638
         if not guild.unavailable and guild.large:

@@ -48,9 +48,6 @@ class Reminder(Cog):
         super().__init__()
         self.bot = bot
         self.logger = logging.getLogger("red.ZeCogsV3.reminder")
-        self.inject_before_invokes()
-        self.previous_locale = None
-        self.reload_translations()
         # force_registration is for weaklings
         unique_id = int(hashlib.sha512((self.__author__ + "@" + self.__class__.__name__).encode()).hexdigest(), 16)
         self.config = Config.get_conf(self, identifier=unique_id)

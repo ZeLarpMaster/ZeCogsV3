@@ -1,7 +1,6 @@
 import asyncio
 import discord
 import itertools
-import inspect
 import logging
 import math
 import re
@@ -15,14 +14,18 @@ from discord.raw_models import RawReactionActionEvent, RawMessageDeleteEvent, Ra
 from redbot.core import Config, checks
 from redbot.core.config import Group
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator, get_locale
-from redbot.core.commands import Context
+from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.commands import Context, Cog
 
-_ = Translator("ReactRoles", __file__)  # pygettext3 -a -n -p locales react_roles.py
-BaseCog = getattr(commands, "Cog", object)
+T_ = Translator("ReactRoles", __file__)  # pygettext3 -D -n -p locales react_roles.py
 
 
-class ReactRoles(BaseCog):
+def _(s):
+    return lambda *args, **kwargs: T_(s).format(*args, **kwargs)
+
+
+@cog_i18n(T_)
+class ReactRoles(Cog):
     """Associate emojis on messages with roles to gain/lose roles when clicking on reactions
 
     RedBot V3 edition"""
@@ -34,13 +37,54 @@ class ReactRoles(BaseCog):
     EMOTE_REGEX = re.compile("<a?:[a-zA-Z0-9_]{2,32}:(\d{1,20})>")
     MESSAGE_GROUP = "MESSAGE"
 
+    # Embed constants
+    LINK_LIST_TITLE = _("Role Links")
+    LINK_LIST_NO_LINKS = _("There are no links in this server")
+
+    # Logging message constants
+    LOG_MESSAGE_NOT_FOUND = _("Could not find message {msg_id} in {channel}.")
+    LOG_CHANNEL_NOT_FOUND = _("Could not find channel {channel_id}.")
+    LOG_SERVER_NOT_FOUND = _("Could not find server with id {guild_id}.")
+    LOG_PROCESSING_LOOP_ENDED = _("The processing loop has ended.")
+    LOG_BINDINGS = _("Cached bindings: {bindings}")
+
+    # Message constants
+    PROGRESS_FORMAT = _("Checked {c} out of {r} reactions out of {t} emojis.")
+    PROGRESS_COMPLETE_FORMAT = _(":white_check_mark: Completed! Checked a total of {c} reactions.\n"
+                                 "Gave a total of {g} roles.")
+    MESSAGE_NOT_FOUND = _(":x: Message not found.")
+    ALREADY_BOUND = _(":x: The emoji is already bound on that message.")
+    NOT_IN_SERVER = _(":x: The channel must be in a server.")
+    ROLE_NOT_FOUND = _(":x: Role not found on the given channel's server.")
+    EMOJI_NOT_FOUND = _(":x: Emoji not found in any of my servers or in unicode emojis.")
+    CANT_ADD_REACTIONS = _(":x: I don't have the permission to add reactions in that channel.")
+    CANT_MANAGE_ROLES = _(":x: I don't have the permission to manage users' roles in the channel's server.")
+    ROLE_SUCCESSFULLY_BOUND = _(":white_check_mark: The role has been bound to {} on the message in {}.")
+    ROLE_NOT_BOUND = _(":x: The role is not bound to that message.")
+    INITIALIZING = _("Initializing...")
+    ROLE_UNBOUND = _(":put_litter_in_its_place: Unbound the role on the message.\n{}")
+    REACTION_CLEAN_START = _("Removing linked reactions...")
+    PROGRESS_REMOVED = _("Removed **{} / {}** reactions...")
+    REACTION_CLEAN_DONE = _("Removed **{}** reactions.")
+    LINK_MESSAGE_NOT_FOUND = _("The following messages weren't found: {}")
+    LINK_CHANNEL_NOT_FOUND = _("The following channels weren't found: {}")
+    LINK_PAIR_INVALID = _("The following channel-message pairs were invalid: {}")
+    LINK_MUST_SPECIFY = _("You must specify at least one message to be linked.")
+    LINK_FAILED = _(":x: Failed to link reactions.\n{reasons}")
+    LINK_SUCCESSFUL = _(":white_check_mark: Successfully linked the reactions.")
+    LINK_NAME_TAKEN = _(":x: That link name is already used in the current server. "
+                        "Remove it before assigning to it.")
+    UNLINK_NOT_FOUND = _(":x: Could not find a link with that name in this server.")
+    UNLINK_SUCCESSFUL = _(":white_check_mark: The link has been removed from this server.")
+    CANT_CHECK_LINKED = _(":x: Cannot run a check on linked messages.")
+    REACTION_NOT_FOUND = _(":x: Could not find the reaction of that message.")
+    CANT_GIVE_ROLE = _(":x: I can't give that role! Maybe it's higher than my own highest role?")
+
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
         self.logger = logging.getLogger("red.ZeCogsV3.react_roles")
         self.logger.setLevel(logging.INFO)
-        self.inject_before_invokes()
-        self.previous_locale = None
-        self.reload_translations()
         # force_registration is for weaklings
         unique_id = int(hashlib.sha512((self.__author__ + "@" + self.__class__.__name__).encode()).hexdigest(), 16)
         self.config = Config.get_conf(self, identifier=unique_id)
@@ -107,9 +151,9 @@ class ReactRoles(BaseCog):
                                 self.add_to_cache(channel.guild.id, channel.id, msg.id, emoji_str, role)
                                 counter.update((channel.name, ))
                     else:
-                        self.warn(lambda: self.LOG_MESSAGE_NOT_FOUND, msg_id=msg_id, channel=channel.mention)
+                        self.logger.warning(self.LOG_MESSAGE_NOT_FOUND(msg_id=msg_id, channel=channel.mention))
             else:
-                self.warn(lambda: self.LOG_CHANNEL_NOT_FOUND, channel_id=channel_id)
+                self.logger.warning(self.LOG_CHANNEL_NOT_FOUND(channel_id=channel_id))
 
         # Caching links
         guild_configs = await self.config.all_guilds()
@@ -120,9 +164,9 @@ class ReactRoles(BaseCog):
                 if link_list is not None:
                     self.parse_links(guild_id, link_list.values())
             else:
-                self.warn(lambda: self.LOG_SERVER_NOT_FOUND, guild_id=guild_id)
+                self.logger.warning(self.LOG_SERVER_NOT_FOUND(guild_id=guild_id))
 
-        self.info(lambda: self.LOG_BINDINGS, bindings=", ".join(": ".join(map(str, pair)) for pair in counter.items()))
+        self.logger.info(self.LOG_BINDINGS(bindings=", ".join(": ".join(map(str, pair)) for pair in counter.items())))
 
     # Commands
     @commands.group(name="roles", invoke_without_command=True)
@@ -139,7 +183,7 @@ class ReactRoles(BaseCog):
         """Lists all reaction links in the current server"""
         guild = ctx.guild
         server_links = await self.config.guild(guild).links()
-        embed = discord.Embed(title=self.LINK_LIST_TITLE, colour=discord.Colour.light_grey())
+        embed = discord.Embed(title=self.LINK_LIST_TITLE(), colour=discord.Colour.light_grey())
         for name, pairs in server_links.items():
             value = ""
             for channel, messages in itertools.groupby(pairs, key=lambda p: p.split("_")[0]):
@@ -147,7 +191,7 @@ class ReactRoles(BaseCog):
             if len(value) > 0:
                 embed.add_field(name=name, value=value)
         if len(embed.fields) == 0:
-            embed.description = self.LINK_LIST_NO_LINKS
+            embed.description = self.LINK_LIST_NO_LINKS()
         await ctx.send(embed=embed)
 
     @_roles.command(name="unlink")
@@ -159,10 +203,10 @@ class ReactRoles(BaseCog):
         server_links = await self.config.guild(guild).links()
         name = name.lower()
         if name not in server_links:
-            response = self.UNLINK_NOT_FOUND
+            response = self.UNLINK_NOT_FOUND()
         else:
             await self.remove_links(guild, name)
-            response = self.UNLINK_SUCCESSFUL
+            response = self.UNLINK_SUCCESSFUL()
         await ctx.send(response)
 
     @_roles.command(name="link")
@@ -198,28 +242,28 @@ class ReactRoles(BaseCog):
             else:
                 invalid_pairs.append(pair)
         # Generate response message
-        confimation_msg = ""
+        failure_reasons = []
         if len(linked_messages) == 0:
-            confimation_msg += self.LINK_MUST_SPECIFY
+            failure_reasons.append(self.LINK_MUST_SPECIFY())
         if len(invalid_pairs) > 0:
-            confimation_msg += self.LINK_PAIR_INVALID.format(", ".join(invalid_pairs)) + "\n"
+            failure_reasons.append(self.LINK_PAIR_INVALID(", ".join(invalid_pairs)))
         if len(channels_not_found) > 0:
-            confimation_msg += self.LINK_CHANNEL_NOT_FOUND.format(", ".join(channels_not_found)) + "\n"
+            failure_reasons.append(self.LINK_CHANNEL_NOT_FOUND(", ".join(channels_not_found)))
         if len(messages_not_found) > 0:
-            confimation_msg += self.LINK_MESSAGE_NOT_FOUND.format(
-                ", ".join("{} in <#{}>".format(p[0], p[1]) for p in messages_not_found)) + "\n"
-        if len(confimation_msg) > 0:
-            response = self.LINK_FAILED + confimation_msg
+            failure_reasons.append(self.LINK_MESSAGE_NOT_FOUND(
+                ", ".join("{} in <#{}>".format(p[0], p[1]) for p in messages_not_found)))
+        if len(failure_reasons) > 0:
+            response = self.LINK_FAILED(reasons="\n".join(failure_reasons))
         else:
             # Save configs
             async with self.config.guild(guild).links() as server_links:
                 name = name.lower()
                 if name in server_links:
-                    response = self.LINK_NAME_TAKEN
+                    response = self.LINK_NAME_TAKEN()
                 else:
                     server_links[name] = pairs
                     self.parse_links(guild.id, [pairs])
-                    response = self.LINK_SUCCESSFUL
+                    response = self.LINK_SUCCESSFUL()
         await ctx.send(response)
 
     @_roles.command(name="add")
@@ -237,21 +281,21 @@ class ReactRoles(BaseCog):
         guild = channel.guild
         message = await self.safe_get_message(channel, message_id)
         if message is None:
-            response = self.MESSAGE_NOT_FOUND
+            response = self.MESSAGE_NOT_FOUND()
         elif guild is None:
-            response = self.NOT_IN_SERVER
+            response = self.NOT_IN_SERVER()
         elif role.guild != channel.guild:
-            response = self.ROLE_NOT_FOUND
+            response = self.ROLE_NOT_FOUND()
         elif channel.guild.me.guild_permissions.manage_roles is False:
-            response = self.CANT_MANAGE_ROLES
+            response = self.CANT_MANAGE_ROLES()
         elif channel.permissions_for(channel.guild.me).add_reactions is False:
-            response = self.CANT_ADD_REACTIONS
+            response = self.CANT_ADD_REACTIONS()
         else:
             msg_conf = self.get_message_config(channel.id, message.id)
             emoji_match = self.EMOTE_REGEX.fullmatch(emoji)
             emoji_id = emoji if emoji_match is None else emoji_match.group(1)
             if emoji_id in await msg_conf({}):
-                response = self.ALREADY_BOUND
+                response = self.ALREADY_BOUND()
             else:
                 emoji = None
                 if emoji_id.isdigit():
@@ -261,19 +305,19 @@ class ReactRoles(BaseCog):
                 try:
                     await message.add_reaction(emoji or emoji_id)
                 except discord.HTTPException:  # Failed to find the emoji
-                    response = self.EMOJI_NOT_FOUND
+                    response = self.EMOJI_NOT_FOUND()
                 else:
                     try:
                         await ctx.message.author.add_roles(role)
                         await ctx.message.author.remove_roles(role)
                     except (discord.Forbidden, discord.HTTPException):
-                        response = self.CANT_GIVE_ROLE
+                        response = self.CANT_GIVE_ROLE()
                         await message.remove_reaction(emoji or emoji_id, self.bot.user)
                     else:
                         self.add_to_message_cache(channel.id, message_id, message)
                         self.add_to_cache(guild.id, channel.id, message_id, emoji_id, role)
                         await msg_conf.get_attr(emoji_id).set(role.id)
-                        response = self.ROLE_SUCCESSFULLY_BOUND.format(emoji or emoji_id, channel.mention)
+                        response = self.ROLE_SUCCESSFULLY_BOUND(emoji or emoji_id, channel.mention)
         await ctx.send(response)
 
     @_roles.command(name="remove")
@@ -291,7 +335,7 @@ class ReactRoles(BaseCog):
         all_emojis = await msg_config.all()
         emoji_config = discord.utils.find(lambda o: o[1] == role.id, all_emojis.items())
         if emoji_config is None:
-            await ctx.send(self.ROLE_NOT_BOUND)
+            await ctx.send(self.ROLE_NOT_BOUND())
         else:
             emoji_str = emoji_config[0]
             await msg_config.get_attr(emoji_str).clear()
@@ -299,14 +343,14 @@ class ReactRoles(BaseCog):
             self.remove_role_from_cache(guild.id, channel.id, message_id, emoji_str)
             msg = await self.safe_get_message(channel, message_id)
             if msg is None:
-                await ctx.send(self.ROLE_UNBOUND + self.MESSAGE_NOT_FOUND)
+                await ctx.send(self.ROLE_UNBOUND(self.MESSAGE_NOT_FOUND()))
             else:
                 reaction = discord.utils.find(
                     lambda r: r.emoji.id == emoji_str if r.custom_emoji else r.emoji == emoji_str, msg.reactions)
                 if reaction is None:
-                    await ctx.send(self.ROLE_UNBOUND + self.REACTION_NOT_FOUND)
+                    await ctx.send(self.ROLE_UNBOUND(self.REACTION_NOT_FOUND()))
                 else:
-                    answer = await ctx.send(self.REACTION_CLEAN_START)
+                    answer = await ctx.send(self.ROLE_UNBOUND(self.REACTION_CLEAN_START()))
                     after = None
                     count = 0
                     user = None
@@ -315,8 +359,8 @@ class ReactRoles(BaseCog):
                             await msg.remove_reaction(reaction.emoji, user)
                             count += 1
                         after = user
-                        await answer.edit(content=self.PROGRESS_REMOVED.format(count, reaction.count))
-                    await answer.edit(content=self.REACTION_CLEAN_DONE.format(count))
+                        await answer.edit(content=self.ROLE_UNBOUND(self.PROGRESS_REMOVED(count, reaction.count)))
+                    await answer.edit(content=self.ROLE_UNBOUND(self.REACTION_CLEAN_DONE(count)))
 
     @_roles.command(name="check")
     @commands.guild_only()
@@ -329,13 +373,13 @@ class ReactRoles(BaseCog):
         msg = await self.safe_get_message(channel, message_id)
         server_links = self.links.get(guild.id, {})
         if str(channel.id) + "_" + str(message_id) in server_links:
-            await ctx.send(self.CANT_CHECK_LINKED)
+            await ctx.send(self.CANT_CHECK_LINKED())
         elif msg is None:
-            await ctx.send(self.MESSAGE_NOT_FOUND)
+            await ctx.send(self.MESSAGE_NOT_FOUND())
         else:
             msg_conf = self.get_message_config(channel.id, message_id)
             if await msg_conf(...) is not ...:
-                progress_msg = await ctx.send(self.INITIALIZING)
+                progress_msg = await ctx.send(self.INITIALIZING())
                 given_roles = 0
                 checked_count = 0
                 total_count = sum(map(lambda r: r.count, msg.reactions)) - len(msg.reactions)  # Remove the bot's
@@ -358,13 +402,13 @@ class ReactRoles(BaseCog):
                                     given_roles += 1
                                 checked_count += 1
                             after = user
-                            await progress_msg.edit(content=self.PROGRESS_FORMAT.format(
-                                c=checked_count, r=total_count, t=total_reactions))
+                            await progress_msg.edit(content=self.PROGRESS_FORMAT(c=checked_count, r=total_count,
+                                                                                 t=total_reactions))
                     else:
                         checked_count += react.count
-                        await progress_msg.edit(content=self.PROGRESS_FORMAT.format(
-                            c=checked_count, r=total_count, t=total_reactions))
-                await progress_msg.edit(content=self.PROGRESS_COMPLETE_FORMAT.format(c=checked_count, g=given_roles))
+                        await progress_msg.edit(content=self.PROGRESS_FORMAT(c=checked_count, r=total_count,
+                                                                             t=total_reactions))
+                await progress_msg.edit(content=self.PROGRESS_COMPLETE_FORMAT(c=checked_count, g=given_roles))
 
     # Utilities
     async def check_add_role(self, emoji: discord.PartialEmoji, message_id: int, channel_id: int, user_id: int):
@@ -412,7 +456,8 @@ class ReactRoles(BaseCog):
                     links.remove(pair)
 
     async def add_role_queue(self, member: discord.Member, role: discord.Role, add_bool: bool, *,
-                             linked_roles: set=set()):
+                             linked_roles: set=None):
+        linked_roles = linked_roles if linked_roles is not None else set()
         key = "{}_{}".format(member.guild.id, member.id)
         q = self.role_map.get(key)
         if q is None:  # True --> add   False --> remove
@@ -446,7 +491,7 @@ class ReactRoles(BaseCog):
                     self.role_queue.task_done()
                 finally:
                     await asyncio.sleep(self.PROCESSING_WAIT_TIME)
-        self.info(lambda: self.LOG_PROCESSING_LOOP_ENDED)
+        self.logger.info(self.LOG_PROCESSING_LOOP_ENDED())
 
     # Utilities
     async def safe_get_message(self, channel: discord.TextChannel, message_id: typing.Union[str, int]) \
@@ -526,72 +571,7 @@ class ReactRoles(BaseCog):
         self.message_cache.pop("{}_{}".format(channel_id, message_id), None)
 
     def get_message_config(self, channel_id: int, message_id: int) -> Group:
-        return self.config.custom(self.MESSAGE_GROUP, channel_id, message_id)
+        return self.config.custom(self.MESSAGE_GROUP, str(channel_id), str(message_id))
 
     async def get_all_message_configs(self) -> Group:
         return await self.config.custom(self.MESSAGE_GROUP).all()
-
-    def reload_translations(self):
-        new_locale = get_locale()
-        if self.previous_locale == new_locale:
-            return  # Don't care if the locale hasn't changed
-        self.previous_locale = new_locale
-
-        # Embed constants
-        self.LINK_LIST_TITLE = _("Role Links")
-        self.LINK_LIST_NO_LINKS = _("There are no links in this server")
-
-        # Logging message constants
-        self.LOG_MESSAGE_NOT_FOUND = _("Could not find message {msg_id} in {channel}.")
-        self.LOG_CHANNEL_NOT_FOUND = _("Could not find channel {channel_id}.")
-        self.LOG_SERVER_NOT_FOUND = _("Could not find server with id {guild_id}.")
-        self.LOG_PROCESSING_LOOP_ENDED = _("The processing loop has ended.")
-        self.LOG_BINDINGS = _("Cached bindings: {bindings}")
-
-        # Message constants
-        self.PROGRESS_FORMAT = _("Checked {c} out of {r} reactions out of {t} emojis.")
-        self.PROGRESS_COMPLETE_FORMAT = _(""":white_check_mark: Completed! Checked a total of {c} reactions.
-Gave a total of {g} roles.""")
-        self.MESSAGE_NOT_FOUND = _(":x: Message not found.")
-        self.ALREADY_BOUND = _(":x: The emoji is already bound on that message.")
-        self.NOT_IN_SERVER = _(":x: The channel must be in a server.")
-        self.ROLE_NOT_FOUND = _(":x: Role not found on the given channel's server.")
-        self.EMOJI_NOT_FOUND = _(":x: Emoji not found in any of my servers or in unicode emojis.")
-        self.CANT_ADD_REACTIONS = _(":x: I don't have the permission to add reactions in that channel.")
-        self.CANT_MANAGE_ROLES = _(":x: I don't have the permission to manage users' roles in the channel's server.")
-        self.ROLE_SUCCESSFULLY_BOUND = _(":white_check_mark: The role has been bound to {} on the message in {}.")
-        self.ROLE_NOT_BOUND = _(":x: The role is not bound to that message.")
-        self.INITIALIZING = _("Initializing...")
-        self.ROLE_UNBOUND = _(":put_litter_in_its_place: Unbound the role on the message.\n")
-        self.REACTION_CLEAN_START = self.ROLE_UNBOUND + _("Removing linked reactions...")
-        self.PROGRESS_REMOVED = self.ROLE_UNBOUND + _("Removed **{} / {}** reactions...")
-        self.REACTION_CLEAN_DONE = self.ROLE_UNBOUND + _("Removed **{}** reactions.")
-        self.LINK_MESSAGE_NOT_FOUND = _("The following messages weren't found: {}")
-        self.LINK_CHANNEL_NOT_FOUND = _("The following channels weren't found: {}")
-        self.LINK_PAIR_INVALID = _("The following channel-message pairs were invalid: {}")
-        self.LINK_MUST_SPECIFY = _("You must specify at least one message to be linked.")
-        self.LINK_FAILED = _(":x: Failed to link reactions.\n")
-        self.LINK_SUCCESSFUL = _(":white_check_mark: Successfully linked the reactions.")
-        self.LINK_NAME_TAKEN = _(":x: That link name is already used in the current server. "
-                                 "Remove it before assigning to it.")
-        self.UNLINK_NOT_FOUND = _(":x: Could not find a link with that name in this server.")
-        self.UNLINK_SUCCESSFUL = _(":white_check_mark: The link has been removed from this server.")
-        self.CANT_CHECK_LINKED = _(":x: Cannot run a check on linked messages.")
-        self.REACTION_NOT_FOUND = _(":x: Could not find the reaction of that message.")
-        self.CANT_GIVE_ROLE = _(":x: I can't give that role! Maybe it's higher than my own highest role?")
-
-    def log(self, logging_func: typing.Callable, *args, **kwargs):
-        self.reload_translations()
-        logging_func(*args, **kwargs)
-
-    def info(self, msg: typing.Callable[[], str], *args, **kwargs):
-        self.log(self.logger.info, msg().format(*args, **kwargs))
-
-    def warn(self, msg: typing.Callable[[], str], *args, **kwargs):
-        self.log(self.logger.warning, msg().format(*args, **kwargs))
-
-    def inject_before_invokes(self):
-        for name, value in inspect.getmembers(self, lambda o: isinstance(o, commands.Command)):
-            async def wrapped_reload(*_):
-                self.reload_translations()
-            value.before_invoke(wrapped_reload)

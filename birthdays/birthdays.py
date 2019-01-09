@@ -1,6 +1,4 @@
-import inspect
 import logging
-import typing
 import hashlib
 import asyncio
 import contextlib
@@ -11,27 +9,46 @@ import itertools
 from redbot.core import commands
 from redbot.core import Config, checks
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator, get_locale
 from redbot.core.config import Group
-from redbot.core.commands import Context
+from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.commands import Context, Cog
 
-_ = Translator("Birthdays", __file__)  # pygettext3 -a -n -p locales birthdays.py
-BaseCog = getattr(commands, "Cog", object)
+T_ = Translator("Birthdays", __file__)  # pygettext3 -Dnp locales birthdays.py
 
 
-class Birthdays(BaseCog):
+def _(s):
+    def func(*args, **kwargs):
+        real_args = list(args)
+        real_args.pop(0)
+        return T_(s).format(*real_args, **kwargs)
+    return func
+
+
+@cog_i18n(T_)
+class Birthdays(Cog):
     """Announces people's birthdays and gives them a birthday role for the whole UTC day"""
     __author__ = "ZeLarpMaster#0818"
 
     # Behavior related constants
     DATE_GROUP = "DATE"
 
+    # Embed constants
+    BDAY_LIST_TITLE = _("Birthday List")
+
+    # Message constants
+    BDAY_WITH_YEAR = _("<@!{}> is now **{} years old**. :tada:")
+    BDAY_WITHOUT_YEAR = _("It's <@!{}>'s birthday today! :tada:")
+    ROLE_SET = _(":white_check_mark: The birthday role on **{g}** has been set to: **{r}**.")
+    BDAY_INVALID = _(":x: The birthday date you entered is invalid. It must be `MM-DD`.")
+    BDAY_SET = _(":white_check_mark: Your birthday has been set to: **{}**.")
+    CHANNEL_SET = _(":white_check_mark: "
+                    "The channel for announcing birthdays on **{g}** has been set to: **{c}**.")
+    BDAY_REMOVED = _(":put_litter_in_its_place: Your birthday has been removed.")
+
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
         self.logger = logging.getLogger("red.ZeCogsV3.birthdays")
-        self.inject_before_invokes()
-        self.previous_locale = None
-        self.reload_translations()
         # force_registration is for weaklings
         unique_id = int(hashlib.sha512((self.__author__ + "@" + self.__class__.__name__).encode()).hexdigest(), 16)
         self.config = Config.get_conf(self, identifier=unique_id)
@@ -66,7 +83,7 @@ class Birthdays(BaseCog):
         message = ctx.message
         guild = message.guild
         await self.config.guild(channel.guild).channel.set(channel.id)
-        await message.channel.send(self.CHANNEL_SET.format(g=guild.name, c=channel.name))
+        await message.channel.send(self.CHANNEL_SET(g=guild.name, c=channel.name))
 
     @bday.command(name="role", pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_roles=True)
@@ -75,14 +92,14 @@ class Birthdays(BaseCog):
         message = ctx.message
         guild = message.guild
         await self.config.guild(role.guild).role.set(role.id)
-        await message.channel.send(self.ROLE_SET.format(g=guild.name, r=role.name))
+        await message.channel.send(self.ROLE_SET(g=guild.name, r=role.name))
 
     @bday.command(name="remove", aliases=["del", "clear", "rm"], pass_context=True)
     async def bday_remove(self, ctx: Context):
         """Unsets your birthday date"""
         message = ctx.message
         await self.remove_user_bday(message.author.id)
-        await message.channel.send(self.BDAY_REMOVED)
+        await message.channel.send(self.BDAY_REMOVED())
 
     @bday.command(name="set", pass_context=True)
     async def bday_set(self, ctx: Context, date, year: int=None):
@@ -95,13 +112,13 @@ class Birthdays(BaseCog):
         author = message.author
         birthday = self.parse_date(date)
         if birthday is None:
-            await channel.send(self.BDAY_INVALID)
+            await channel.send(self.BDAY_INVALID())
         else:
             await self.remove_user_bday(author.id)
             await self.get_date_config(birthday.toordinal()).get_attr(author.id).set(year)
             bday_month_str = birthday.strftime("%B")
             bday_day_str = birthday.strftime("%d").lstrip("0")  # To remove the zero-capped
-            await channel.send(self.BDAY_SET.format(bday_month_str + " " + bday_day_str))
+            await channel.send(self.BDAY_SET(bday_month_str + " " + bday_day_str))
 
     @bday.command(name="list", pass_context=True)
     async def bday_list(self, ctx: Context):
@@ -112,7 +129,7 @@ class Birthdays(BaseCog):
         await self.clean_bdays()
         bdays = await self.get_all_date_configs()
         this_year = datetime.date.today().year
-        embed = discord.Embed(title=self.BDAY_LIST_TITLE, color=discord.Colour.lighter_grey())
+        embed = discord.Embed(title=self.BDAY_LIST_TITLE(), color=discord.Colour.lighter_grey())
         for k, g in itertools.groupby(sorted(datetime.datetime.fromordinal(int(o)) for o in bdays.keys()),
                                       lambda i: i.month):
             # Basically separates days with "\n" and people on the same day with ", "
@@ -142,9 +159,9 @@ class Birthdays(BaseCog):
         embed = discord.Embed(color=discord.Colour.gold())
         if year is not None:
             age = datetime.date.today().year - int(year)  # Doesn't support non-eastern age counts but whatever
-            embed.description = self.BDAY_WITH_YEAR.format(user_id, age)
+            embed.description = self.BDAY_WITH_YEAR(user_id, age)
         else:
-            embed.description = self.BDAY_WITHOUT_YEAR.format(user_id)
+            embed.description = self.BDAY_WITHOUT_YEAR(user_id)
         all_guild_configs = await self.config.all_guilds()
         for guild_id, guild_config in all_guild_configs.items():
             guild = self.bot.get_guild(guild_id)
@@ -167,10 +184,9 @@ class Birthdays(BaseCog):
                         await channel.send(embed=embed)
 
     async def clean_bdays(self):
-        """Cleans the birthday entries with no user's birthday
-        Also removes birthdays of users who aren't in any visible server anymore
-
-        Happens when someone changes their birthday and there's nobody else in the same day"""
+        # Cleans the birthday entries with no user's birthday
+        # Also removes birthdays of users who aren't in any visible server anymore
+        # Happens when someone changes their birthday and there's nobody else in the same day
         birthdays = await self.get_all_date_configs()
         for date, bdays in birthdays.copy().items():
             for user_id, year in bdays.copy().items():
@@ -215,38 +231,3 @@ class Birthdays(BaseCog):
 
     async def get_all_date_configs(self) -> Group:
         return await self.config.custom(self.DATE_GROUP).all()
-
-    def reload_translations(self):
-        if self.previous_locale == get_locale():
-            return  # Don't care if the locale hasn't changed
-
-        # Embed constants
-        self.BDAY_LIST_TITLE = _("Birthday List")
-
-        # Logging message constants
-
-        # Message constants
-        self.BDAY_WITH_YEAR = _("<@!{}> is now **{} years old**. :tada:")
-        self.BDAY_WITHOUT_YEAR = _("It's <@!{}>'s birthday today! :tada:")
-        self.ROLE_SET = _(":white_check_mark: The birthday role on **{g}** has been set to: **{r}**.")
-        self.BDAY_INVALID = _(":x: The birthday date you entered is invalid. It must be `MM-DD`.")
-        self.BDAY_SET = _(":white_check_mark: Your birthday has been set to: **{}**.")
-        self.CHANNEL_SET = _(":white_check_mark: "
-                             "The channel for announcing birthdays on **{g}** has been set to: **{c}**.")
-        self.BDAY_REMOVED = _(":put_litter_in_its_place: Your birthday has been removed.")
-
-    def log(self, logging_func: typing.Callable, *args, **kwargs):
-        self.reload_translations()
-        logging_func(*args, **kwargs)
-
-    def info(self, msg: typing.Callable[[], str], *args, **kwargs):
-        self.log(self.logger.info, msg().format(*args, **kwargs))
-
-    def warn(self, msg: typing.Callable[[], str], *args, **kwargs):
-        self.log(self.logger.warning, msg().format(*args, **kwargs))
-
-    def inject_before_invokes(self):
-        for name, value in inspect.getmembers(self, lambda o: isinstance(o, commands.Command)):
-            async def wrapped_reload(*_):
-                self.reload_translations()
-            value.before_invoke(wrapped_reload)

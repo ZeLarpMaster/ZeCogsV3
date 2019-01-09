@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-05-22 22:28-0400\n"
+"POT-Creation-Date: 2019-01-08 22:43-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,35 +15,77 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: birthdays.py:224
+#: birthdays.py:29
+#, docstring
+msgid "Announces people's birthdays and gives them a birthday role for the whole UTC day"
+msgstr ""
+
+#: birthdays.py:36
 msgid "Birthday List"
 msgstr ""
 
-#: birthdays.py:229
+#: birthdays.py:39
 msgid "<@!{}> is now **{} years old**. :tada:"
 msgstr ""
 
-#: birthdays.py:230
+#: birthdays.py:40
 msgid "It's <@!{}>'s birthday today! :tada:"
 msgstr ""
 
-#: birthdays.py:231
+#: birthdays.py:41
 msgid ":white_check_mark: The birthday role on **{g}** has been set to: **{r}**."
 msgstr ""
 
-#: birthdays.py:232
+#: birthdays.py:42
 msgid ":x: The birthday date you entered is invalid. It must be `MM-DD`."
 msgstr ""
 
-#: birthdays.py:233
+#: birthdays.py:43
 msgid ":white_check_mark: Your birthday has been set to: **{}**."
 msgstr ""
 
-#: birthdays.py:234
+#: birthdays.py:44
 msgid ":white_check_mark: The channel for announcing birthdays on **{g}** has been set to: **{c}**."
 msgstr ""
 
-#: birthdays.py:236
+#: birthdays.py:46
 msgid ":put_litter_in_its_place: Your birthday has been removed."
+msgstr ""
+
+#: birthdays.py:76
+#, docstring
+msgid "Birthday settings"
+msgstr ""
+
+#: birthdays.py:82
+#, docstring
+msgid "Sets the birthday announcement channel for this server"
+msgstr ""
+
+#: birthdays.py:91
+#, docstring
+msgid "Sets the birthday role for this server"
+msgstr ""
+
+#: birthdays.py:99
+#, docstring
+msgid "Unsets your birthday date"
+msgstr ""
+
+#: birthdays.py:106
+#, docstring
+msgid ""
+"Sets your birthday date\n"
+"\n"
+"        The given date must be given as: MM-DD\n"
+"        Year is optional. If ungiven, the age won't be displayed."
+msgstr ""
+
+#: birthdays.py:125
+#, docstring
+msgid ""
+"Lists the birthdays\n"
+"\n"
+"        If a user has their year set, it will display the age they'll get after their birthday this year"
 msgstr ""
 

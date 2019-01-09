@@ -496,9 +496,10 @@ class ReactRoles(Cog):
 
     # Provided by <@78631113035100160>, modified by me because it didn't run
     async def maybe_update_guild(self, guild: discord.Guild):
-        # ctx.guild.chunked is innaccurate., discord.py#1638
-        if not guild.chunked or any(m.joined_at is None for m in guild.members):
-            await self.bot.request_offline_members(guild)
+        # ctx.guild.chunked is innaccurate, discord.py#1638
+        if not guild.unavailable and guild.large:
+            if not guild.chunked or any(m.joined_at is None for m in guild.members):
+                await self.bot.request_offline_members(guild)
 
     def get_guild(self, guild_id: int) -> Group:
         # noinspection PyProtectedMember

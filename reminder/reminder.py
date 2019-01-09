@@ -1,6 +1,4 @@
-import inspect
 import logging
-import typing
 import hashlib
 import re
 import collections
@@ -11,14 +9,22 @@ import asyncio
 from redbot.core import commands
 from redbot.core import Config
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator, get_locale
-from redbot.core.commands import Context
+from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.commands import Context, Cog
 
-_ = Translator("Reminder", __file__)  # pygettext3 -a -n -p locales reminder.py
-BaseCog = getattr(commands, "Cog", object)
+T_ = Translator("Reminder", __file__)  # pygettext3 -D -n -p locales reminder.py
 
 
-class Reminder(BaseCog):
+def _(s):
+    def func(*args, **kwargs):
+        real_args = list(args)
+        real_args.pop(0)
+        return T_(s).format(*real_args, **kwargs)
+    return func
+
+
+@cog_i18n(T_)
+class Reminder(Cog):
     """Utilities to remind yourself of whatever you want"""
     __author__ = "ZeLarpMaster#0818"
 
@@ -30,7 +36,16 @@ class Reminder(BaseCog):
                                                ("years", 3.154e+7)])  # (amount in seconds, max amount)
     MAX_SECONDS = TIME_QUANTITIES["years"] * 2
 
+    # Embed constants
+    REMINDER_TITLE = _("Reminder")
+
+    # Message constants
+    INVALID_TIME_FORMAT = _(":x: Invalid time format.")
+    TOO_MUCH_TIME = _(":x: Too long amount of time. Maximum: {} total seconds")
+    WILL_REMIND = _(":white_check_mark: I will remind you in {} seconds.")
+
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
         self.logger = logging.getLogger("red.ZeCogsV3.reminder")
         self.inject_before_invokes()
@@ -61,9 +76,9 @@ class Reminder(BaseCog):
         message = ctx.message
         seconds = self.get_seconds(time)
         if seconds is None:
-            response = self.INVALID_TIME_FORMAT
+            response = self.INVALID_TIME_FORMAT()
         elif seconds >= self.MAX_SECONDS:
-            response = self.TOO_MUCH_TIME.format(round(self.MAX_SECONDS))
+            response = self.TOO_MUCH_TIME(round(self.MAX_SECONDS))
         else:
             user = message.author
             time_now = datetime.datetime.utcnow()
@@ -73,7 +88,7 @@ class Reminder(BaseCog):
             async with self.config.user(user).reminders() as user_reminders:
                 user_reminders.append(reminder)
             self.futures.append(asyncio.ensure_future(self.remind_later(user, seconds, text, reminder)))
-            response = self.WILL_REMIND.format(seconds)
+            response = self.WILL_REMIND(seconds)
         await message.channel.send(response)
 
     # Utilities
@@ -87,13 +102,14 @@ class Reminder(BaseCog):
                     self.config.remove(reminder)  # Delete the reminder if the user doesn't have a mutual server anymore
                 else:
                     time_diff = datetime.datetime.fromtimestamp(reminder["end_time"]) - datetime.datetime.utcnow()
-                    time = max(0, time_diff.total_seconds())
-                    self.futures.append(asyncio.ensure_future(self.remind_later(user, time, reminder["content"], reminder)))
+                    time = max(0.0, time_diff.total_seconds())
+                    fut = asyncio.ensure_future(self.remind_later(user, time, reminder["content"], reminder))
+                    self.futures.append(fut)
 
     async def remind_later(self, user: discord.User, time: float, content: str, reminder):
         """Reminds the `user` in `time` seconds with a message containing `content`"""
         await asyncio.sleep(time)
-        embed = discord.Embed(title=self.REMINDER_TITLE, description=content, color=discord.Colour.blue())
+        embed = discord.Embed(title=self.REMINDER_TITLE(), description=content, color=discord.Colour.blue())
         await user.send(embed=embed)
         async with self.config.user(user).reminders() as user_reminders:
             user_reminders.remove(reminder)
@@ -108,33 +124,3 @@ class Reminder(BaseCog):
             if time_quantity is not None:
                 seconds += time_amnt * time_quantity[1]
         return None if seconds == 0 else seconds
-
-    def reload_translations(self):
-        if self.previous_locale == get_locale():
-            return  # Don't care if the locale hasn't changed
-
-        # Embed constants
-        self.REMINDER_TITLE = _("Reminder")
-
-        # Logging message constants
-
-        # Message constants
-        self.INVALID_TIME_FORMAT = _(":x: Invalid time format.")
-        self.TOO_MUCH_TIME = _(":x: Too long amount of time. Maximum: {} total seconds")
-        self.WILL_REMIND = _(":white_check_mark: I will remind you in {} seconds.")
-
-    def log(self, logging_func: typing.Callable, *args, **kwargs):
-        self.reload_translations()
-        logging_func(*args, **kwargs)
-
-    def info(self, msg: typing.Callable[[], str], *args, **kwargs):
-        self.log(self.logger.info, msg().format(*args, **kwargs))
-
-    def warn(self, msg: typing.Callable[[], str], *args, **kwargs):
-        self.log(self.logger.warning, msg().format(*args, **kwargs))
-
-    def inject_before_invokes(self):
-        for name, value in inspect.getmembers(self, lambda o: isinstance(o, commands.Command)):
-            async def wrapped_reload(*_):
-                self.reload_translations()
-            value.before_invoke(wrapped_reload)

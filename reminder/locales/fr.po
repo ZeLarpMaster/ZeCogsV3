@@ -5,30 +5,68 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-05-22 21:01-0400\n"
-"PO-Revision-Date: 2018-05-22 21:06-0400\n"
+"POT-Creation-Date: 2019-01-08 22:28-0500\n"
+"PO-Revision-Date: 2019-01-08 22:32-0500\n"
+"Last-Translator: \n"
 "Language-Team: \n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
-"X-Generator: Poedit 2.0.7\n"
-"Last-Translator: \n"
+"X-Generator: Poedit 2.2\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"Language: fr\n"
 
-#: reminder.py:115
+#: reminder.py:28
+msgid "Utilities to remind yourself of whatever you want"
+msgstr "Utilitaires pour se rappeler de quoique ce soit"
+
+#: reminder.py:40
 msgid "Reminder"
 msgstr "Rappel"
 
-#: reminder.py:120
+#: reminder.py:43
 msgid ":x: Invalid time format."
 msgstr ":x: Format de temps invalide."
 
-#: reminder.py:121
+#: reminder.py:44
 msgid ":x: Too long amount of time. Maximum: {} total seconds"
 msgstr ":x: Trop longue durée de temps. Maximum: {} secondes au total"
 
-#: reminder.py:122
+#: reminder.py:45
 msgid ":white_check_mark: I will remind you in {} seconds."
 msgstr ":white_check_mark: Je vais vous le rappeler dans {} secondes."
+
+#: reminder.py:69
+msgid ""
+"Remind yourself of something in a specific amount of time\n"
+"\n"
+"        Examples for time: `5d`, `10m`, `10m30s`, `1h`, "
+"`1y1mo2w5d10h30m15s`\n"
+"        Abbreviations: s for seconds, m for minutes, h for hours, d for "
+"days, w for weeks, mo for months, y for years\n"
+"        Any longer abbreviation is accepted. `m` assumes minutes instead of "
+"months.\n"
+"        One month is counted as exact 365/12 days.\n"
+"        Ignores all invalid abbreviations."
+msgstr ""
+"Rappelez vous-même de quelque chose dans un nombre de temps spécifique\n"
+"\n"
+"        Exemples de temps: `5d`, `10m`, `10m30s`, `1h`, "
+"`1y1mo2w5d10h30m15s`\n"
+"        Abréviations: s pour secondes, m pour minutes, h pour heures, d "
+"pour jours (days), w pour semaines (weeks), mo pour mois, y pour années "
+"(years)\n"
+"        Toutes les abréviations plus longues sont acceptées. `m` est pour "
+"minutes au lieu de mois.\n"
+"        Un mois est compté comme étant exactement 365/12 jours.\n"
+"       Toutes les abréviations invalides sont ignorées."
+
+#: reminder.py:110
+msgid ""
+"Reminds the `user` in `time` seconds with a message containing `content`"
+msgstr ""
+
+#: reminder.py:118
+msgid "Returns the amount of converted time or None if invalid"
+msgstr ""

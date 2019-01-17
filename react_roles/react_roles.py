@@ -8,6 +8,7 @@ import traceback
 import typing
 import hashlib
 import collections
+import time
 
 from redbot.core import commands
 from discord.raw_models import RawReactionActionEvent, RawMessageDeleteEvent, RawBulkMessageDeleteEvent
@@ -342,15 +343,14 @@ class ReactRoles(Cog):
                     await ctx.send(self.ROLE_UNBOUND(self.REACTION_NOT_FOUND()))
                 else:
                     answer = await ctx.send(self.ROLE_UNBOUND(self.REACTION_CLEAN_START()))
-                    after = None
                     count = 0
-                    user = None
-                    for page in range(math.ceil(reaction.count / 100)):
-                        async for user in reaction.users(after=after):
-                            await msg.remove_reaction(reaction.emoji, user)
-                            count += 1
-                        after = user
-                        await answer.edit(content=self.ROLE_UNBOUND(self.PROGRESS_REMOVED(count, reaction.count)))
+                    start_time = time.perf_counter()
+                    async for user in reaction.users():
+                        await msg.remove_reaction(reaction.emoji, user)
+                        count += 1
+                        if time.perf_counter() - start_time > 1:
+                            await answer.edit(content=self.ROLE_UNBOUND(self.PROGRESS_REMOVED(count, reaction.count)))
+                            start_time = time.perf_counter()
                     await answer.edit(content=self.ROLE_UNBOUND(self.REACTION_CLEAN_DONE(count)))
 
     @_roles.command(name="check")
@@ -380,21 +380,18 @@ class ReactRoles(Cog):
                     emoji_str = str(react.emoji.id) if react.custom_emoji else react.emoji
                     role = self.get_from_cache(guild.id, channel.id, message_id, emoji_str)
                     if role is not None:
-                        before = 0
-                        after = None
-                        user = None
-                        while before != after:
-                            before = after
-                            async for user in react.users(after=after):
-                                member = guild.get_member(user.id)
-                                if member is not None and member != self.bot.user and \
-                                        discord.utils.get(member.roles, id=role.id) is None:
-                                    await member.add_roles(role)
-                                    given_roles += 1
-                                checked_count += 1
-                            after = user
-                            await progress_msg.edit(content=self.PROGRESS_FORMAT(c=checked_count, r=total_count,
-                                                                                 t=total_reactions))
+                        start_time = time.perf_counter()
+                        async for user in react.users():
+                            member = guild.get_member(user.id)
+                            if member is not None and member != self.bot.user and \
+                                    discord.utils.get(member.roles, id=role.id) is None:
+                                await member.add_roles(role)
+                                given_roles += 1
+                            checked_count += 1
+                            if time.perf_counter() - start_time > 1:
+                                await progress_msg.edit(content=self.PROGRESS_FORMAT(c=checked_count, r=total_count,
+                                                                                     t=total_reactions))
+                                start_time = time.perf_counter()
                     else:
                         checked_count += react.count
                         await progress_msg.edit(content=self.PROGRESS_FORMAT(c=checked_count, r=total_count,

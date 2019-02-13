@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2019-01-08 22:43-0500\n"
-"PO-Revision-Date: 2019-01-08 22:47-0500\n"
+"POT-Creation-Date: 2019-02-12 21:39-0500\n"
+"PO-Revision-Date: 2019-02-12 21:42-0500\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -25,36 +25,36 @@ msgstr ""
 "Annonce l'anniversaire des personnes et leur donne un rôle d'anniversaire "
 "pendant un jour UTC complet"
 
-#: birthdays.py:36
+#: birthdays.py:37
 msgid "Birthday List"
 msgstr "Liste d'anniversaires"
 
-#: birthdays.py:39
+#: birthdays.py:40
 msgid "<@!{}> is now **{} years old**. :tada:"
 msgstr "<@!{}> a maintenant **{} ans**. :tada:"
 
-#: birthdays.py:40
+#: birthdays.py:41
 msgid "It's <@!{}>'s birthday today! :tada:"
 msgstr "C'est l'anniversaire de <@!{}> aujourd'hui! :tada:"
 
-#: birthdays.py:41
+#: birthdays.py:42
 msgid ""
 ":white_check_mark: The birthday role on **{g}** has been set to: **{r}**."
 msgstr ""
 ":white_check_mark: Le rôle d'anniversaire sur le serveur **{g}** est "
 "maintenant: **{r}**."
 
-#: birthdays.py:42
+#: birthdays.py:43
 msgid ":x: The birthday date you entered is invalid. It must be `MM-DD`."
 msgstr ""
 ":x: La date d'anniversaire que vous avez entrée est invalide. Ça doit être "
 "`MM-JJ`."
 
-#: birthdays.py:43
+#: birthdays.py:44
 msgid ":white_check_mark: Your birthday has been set to: **{}**."
 msgstr ":white_check_mark: Votre anniversaire est maintenant le **{}**."
 
-#: birthdays.py:44
+#: birthdays.py:45
 msgid ""
 ":white_check_mark: The channel for announcing birthdays on **{g}** has been "
 "set to: **{c}**."
@@ -62,29 +62,29 @@ msgstr ""
 ":white_check_mark: Le salon d'annonce des anniversaires sur le serveur **{g}"
 "** est maintenant: **{c}**."
 
-#: birthdays.py:46
+#: birthdays.py:47
 msgid ":put_litter_in_its_place: Your birthday has been removed."
 msgstr ":put_litter_in_its_place: Votre date d'anniversaire a été retirée."
 
-#: birthdays.py:76
+#: birthdays.py:77
 msgid "Birthday settings"
 msgstr "Paramètres d'anniversaire"
 
-#: birthdays.py:82
+#: birthdays.py:83
 msgid "Sets the birthday announcement channel for this server"
 msgstr "Définis le salon d'annoncement des anniversaires pour ce serveur"
 
-#: birthdays.py:91
+#: birthdays.py:92
 msgid "Sets the birthday role for this server"
 msgstr "Définis le rôle d'anniversaire pour ce serveur"
 
-#: birthdays.py:99
-msgid "Unsets your birthday date"
+#: birthdays.py:100
+msgid "Unsets your birthday date for this server"
 msgstr "Retire votre date d'anniversaire"
 
-#: birthdays.py:106
+#: birthdays.py:107
 msgid ""
-"Sets your birthday date\n"
+"Sets your birthday date for this server\n"
 "\n"
 "        The given date must be given as: MM-DD\n"
 "        Year is optional. If ungiven, the age won't be displayed."
@@ -92,12 +92,12 @@ msgstr ""
 "Ajoute votre date d'anniversaire\n"
 "\n"
 "        La date donnée doit suivre le format: MM-JJ\n"
-"        L'année est optionnelle. Si elle n'est pas donnée, l'âge ne sera "
-"pas affiché."
+"        L'année est optionnelle. Si elle n'est pas donnée, l'âge ne sera pas "
+"affiché."
 
-#: birthdays.py:125
+#: birthdays.py:126
 msgid ""
-"Lists the birthdays\n"
+"Lists the birthdays for this server\n"
 "\n"
 "        If a user has their year set, it will display the age they'll get "
 "after their birthday this year"
@@ -106,3 +106,6 @@ msgstr ""
 "\n"
 "        Si un utilisateur a son année définie, affiche l'âge qu'il aura "
 "après son anniversaire cet année"
+
+#~ msgid "Unsets your birthday date"
+#~ msgstr "Retire votre date d'anniversaire"

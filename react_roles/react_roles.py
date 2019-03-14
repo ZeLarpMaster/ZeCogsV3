@@ -163,7 +163,7 @@ class ReactRoles(Cog):
         self.logger.info(self.LOG_BINDINGS(bindings=", ".join(": ".join(map(str, pair)) for pair in counter.items())))
 
     # Commands
-    @commands.group(name="roles", invoke_without_command=True)
+    @commands.group(name="reactroles", invoke_without_command=True)
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
     async def _roles(self, ctx: Context):

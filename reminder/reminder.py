@@ -6,13 +6,12 @@ import discord
 import datetime
 import asyncio
 
-from redbot.core import commands
-from redbot.core import Config
+from redbot.core import commands, Config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.commands import Context, Cog
 
-T_ = Translator("Reminder", __file__)  # pygettext3 -D -n -p locales reminder.py
+T_ = Translator("Reminder", __file__)  # pygettext3 -Dnp locales reminder.py
 
 
 def _(s):
@@ -43,6 +42,7 @@ class Reminder(Cog):
     INVALID_TIME_FORMAT = _(":x: Invalid time format.")
     TOO_MUCH_TIME = _(":x: Too long amount of time. Maximum: {} total seconds")
     WILL_REMIND = _(":white_check_mark: I will remind you in {} seconds.")
+    FORGOT_ALL = _(":put_litter_in_its_place: Forgot all of your reminders!")
 
     def __init__(self, bot: Red):
         super().__init__()
@@ -52,17 +52,18 @@ class Reminder(Cog):
         unique_id = int(hashlib.sha512((self.__author__ + "@" + self.__class__.__name__).encode()).hexdigest(), 16)
         self.config = Config.get_conf(self, identifier=unique_id)
         self.config.register_user(reminders=[])
-        self.futures = []
+        self.futures = {}
         asyncio.ensure_future(self.start_saved_reminders())
 
     # Events
     def __unload(self):
-        for future in self.futures:
-            future.cancel()
+        for user_futures in self.futures.values():
+            for future in user_futures:
+                future.cancel()
 
     # Commands
-    @commands.command(pass_context=True)
-    async def remind(self, ctx: Context, time, *, text):
+    @commands.group(invoke_without_command=True)
+    async def remind(self, ctx: Context, time: str, *, text: str):
         """Remind yourself of something in a specific amount of time
 
         Examples for time: `5d`, `10m`, `10m30s`, `1h`, `1y1mo2w5d10h30m15s`
@@ -84,9 +85,26 @@ class Reminder(Cog):
             reminder = {"content": text, "start_time": time_now.timestamp(), "end_time": end_time.timestamp()}
             async with self.config.user(user).reminders() as user_reminders:
                 user_reminders.append(reminder)
-            self.futures.append(asyncio.ensure_future(self.remind_later(user, seconds, text, reminder)))
+            self.futures.setdefault(user.id, []).append(asyncio.ensure_future(self.remind_later(user, seconds, text, reminder)))
             response = self.WILL_REMIND(seconds)
-        await message.channel.send(response)
+        await ctx.send(response)
+
+    @remind.group()
+    async def forget(self, ctx: Context):
+        """Forget your reminders
+
+        Currently only supports forgetting *all*"""
+        pass
+
+    @forget.command(name="all")
+    async def forget_all(self, ctx: Context):
+        """Forget **all** your reminders"""
+        user = ctx.message.author
+        for future in self.futures.get(user.id, []):
+            future.cancel()
+        async with self.config.user(user).reminders() as user_reminders:
+            user_reminders.clear()
+        await ctx.send(self.FORGOT_ALL())
 
     # Utilities
     async def start_saved_reminders(self):
@@ -101,10 +119,10 @@ class Reminder(Cog):
                     time_diff = datetime.datetime.fromtimestamp(reminder["end_time"]) - datetime.datetime.utcnow()
                     time = max(0.0, time_diff.total_seconds())
                     fut = asyncio.ensure_future(self.remind_later(user, time, reminder["content"], reminder))
-                    self.futures.append(fut)
+                    self.futures.setdefault(user.id, []).append(fut)
 
     async def remind_later(self, user: discord.User, time: float, content: str, reminder):
-        """Reminds the `user` in `time` seconds with a message containing `content`"""
+        # Reminds the `user` in `time` seconds with a message containing `content`
         await asyncio.sleep(time)
         embed = discord.Embed(title=self.REMINDER_TITLE(), description=content, color=discord.Colour.blue())
         await user.send(embed=embed)
@@ -112,7 +130,7 @@ class Reminder(Cog):
             user_reminders.remove(reminder)
 
     def get_seconds(self, time):
-        """Returns the amount of converted time or None if invalid"""
+        # Returns the amount of converted time or None if invalid
         seconds = 0
         for time_match in self.TIME_AMNT_REGEX.finditer(time):
             time_amnt = int(time_match.group(1))

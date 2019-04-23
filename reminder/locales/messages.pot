@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2019-01-08 22:28-0500\n"
+"POT-Creation-Date: 2019-04-22 22:43-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,28 +15,32 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: reminder.py:28
+#: reminder.py:27
 #, docstring
 msgid "Utilities to remind yourself of whatever you want"
 msgstr ""
 
-#: reminder.py:40
+#: reminder.py:39
 msgid "Reminder"
 msgstr ""
 
-#: reminder.py:43
+#: reminder.py:42
 msgid ":x: Invalid time format."
 msgstr ""
 
-#: reminder.py:44
+#: reminder.py:43
 msgid ":x: Too long amount of time. Maximum: {} total seconds"
 msgstr ""
 
-#: reminder.py:45
+#: reminder.py:44
 msgid ":white_check_mark: I will remind you in {} seconds."
 msgstr ""
 
-#: reminder.py:69
+#: reminder.py:45
+msgid ":put_litter_in_its_place: Forgot all of your reminders!"
+msgstr ""
+
+#: reminder.py:67
 #, docstring
 msgid ""
 "Remind yourself of something in a specific amount of time\n"
@@ -48,13 +52,16 @@ msgid ""
 "        Ignores all invalid abbreviations."
 msgstr ""
 
-#: reminder.py:110
+#: reminder.py:94
 #, docstring
-msgid "Reminds the `user` in `time` seconds with a message containing `content`"
+msgid ""
+"Forget your reminders\n"
+"\n"
+"        Currently only supports forgetting *all*"
 msgstr ""
 
-#: reminder.py:118
+#: reminder.py:101
 #, docstring
-msgid "Returns the amount of converted time or None if invalid"
+msgid "Forget **all** your reminders"
 msgstr ""
 

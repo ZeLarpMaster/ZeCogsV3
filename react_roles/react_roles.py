@@ -10,15 +10,14 @@ import hashlib
 import collections
 import time
 
-from redbot.core import commands
 from discord.raw_models import RawReactionActionEvent, RawMessageDeleteEvent, RawBulkMessageDeleteEvent
-from redbot.core import Config, checks
+from redbot.core import commands, Config, checks
 from redbot.core.config import Group
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.commands import Context, Cog
 
-T_ = Translator("ReactRoles", __file__)  # pygettext3 -D -n -p locales react_roles.py
+T_ = Translator("ReactRoles", __file__)  # pygettext3 -Dnp locales react_roles.py
 
 
 def _(s):
@@ -163,12 +162,12 @@ class ReactRoles(Cog):
         self.logger.info(self.LOG_BINDINGS(bindings=", ".join(": ".join(map(str, pair)) for pair in counter.items())))
 
     # Commands
-    @commands.group(name="reactroles", invoke_without_command=True)
+    @commands.group(name="reactroles")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
     async def _roles(self, ctx: Context):
         """Roles giving configuration"""
-        await ctx.send_help()
+        pass
 
     @_roles.command(name="linklist")
     @commands.guild_only()
@@ -263,9 +262,12 @@ class ReactRoles(Cog):
     @_roles.command(name="add")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
+    @checks.bot_has_permissions(manage_roles=True, add_reactions=True, manage_messages=True)
     async def _roles_add(self, ctx: Context, message_id: int, channel: discord.TextChannel, emoji, *,
                          role: discord.Role):
         """Add a role on a message
+
+        Requires the bot to have permissions: Manage Roles, Add Reactions and Manage Messages
 
         `message_id` must be found in `channel`
             To get a message's id: Settings > Appearance > Developer mode then

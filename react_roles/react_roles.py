@@ -93,6 +93,8 @@ class ReactRoles(Cog):
         # force_registration is for weaklings
         unique_id = int(hashlib.sha512((self.__author__ + "@" + self.__class__.__name__).encode()).hexdigest(), 16)
         self.config = Config.get_conf(self, identifier=unique_id)
+        if "init_custom" in dir(self.config):
+            self.config.init_custom(self.MESSAGE_GROUP, 1)
         self.config.register_guild(links={})
         self.role_queue = asyncio.Queue()
         self.role_map = {}

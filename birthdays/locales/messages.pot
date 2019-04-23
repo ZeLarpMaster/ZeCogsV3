@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2019-02-12 21:39-0500\n"
+"POT-Creation-Date: 2019-04-22 22:20-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,40 +15,40 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: birthdays.py:29
+#: birthdays.py:28
 #, docstring
 msgid "Announces people's birthdays and gives them a birthday role for the whole UTC day"
 msgstr ""
 
-#: birthdays.py:37
+#: birthdays.py:36
 msgid "Birthday List"
 msgstr ""
 
-#: birthdays.py:40
+#: birthdays.py:39
 msgid "<@!{}> is now **{} years old**. :tada:"
 msgstr ""
 
-#: birthdays.py:41
+#: birthdays.py:40
 msgid "It's <@!{}>'s birthday today! :tada:"
 msgstr ""
 
-#: birthdays.py:42
+#: birthdays.py:41
 msgid ":white_check_mark: The birthday role on **{g}** has been set to: **{r}**."
 msgstr ""
 
-#: birthdays.py:43
+#: birthdays.py:42
 msgid ":x: The birthday date you entered is invalid. It must be `MM-DD`."
 msgstr ""
 
-#: birthdays.py:44
+#: birthdays.py:43
 msgid ":white_check_mark: Your birthday has been set to: **{}**."
 msgstr ""
 
-#: birthdays.py:45
+#: birthdays.py:44
 msgid ":white_check_mark: The channel for announcing birthdays on **{g}** has been set to: **{c}**."
 msgstr ""
 
-#: birthdays.py:47
+#: birthdays.py:46
 msgid ":put_litter_in_its_place: Your birthday has been removed."
 msgstr ""
 

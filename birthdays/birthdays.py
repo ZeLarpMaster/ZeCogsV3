@@ -6,8 +6,7 @@ import datetime
 import discord
 import itertools
 
-from redbot.core import commands
-from redbot.core import Config, checks
+from redbot.core import commands, Config, checks
 from redbot.core.bot import Red
 from redbot.core.config import Group
 from redbot.core.i18n import Translator, cog_i18n
@@ -72,12 +71,13 @@ class Birthdays(Cog):
         self.bday_loop.cancel()  # Forcefully cancel the loop when unloaded
 
     # Commands
-    @commands.group(pass_context=True, invoke_without_command=True)
+    @commands.group()
+    @commands.guild_only()
     async def bday(self, ctx: Context):
         """Birthday settings"""
-        await ctx.send_help()
+        pass
 
-    @bday.command(name="channel", pass_context=True, no_pm=True)
+    @bday.command(name="channel")
     @checks.mod_or_permissions(manage_roles=True)
     async def bday_channel(self, ctx: Context, channel: discord.TextChannel):
         """Sets the birthday announcement channel for this server"""
@@ -86,7 +86,7 @@ class Birthdays(Cog):
         await self.config.guild(channel.guild).channel.set(channel.id)
         await message.channel.send(self.CHANNEL_SET(g=guild.name, c=channel.name))
 
-    @bday.command(name="role", pass_context=True, no_pm=True)
+    @bday.command(name="role")
     @checks.mod_or_permissions(manage_roles=True)
     async def bday_role(self, ctx: Context, role: discord.Role):
         """Sets the birthday role for this server"""
@@ -95,14 +95,14 @@ class Birthdays(Cog):
         await self.config.guild(role.guild).role.set(role.id)
         await message.channel.send(self.ROLE_SET(g=guild.name, r=role.name))
 
-    @bday.command(name="remove", aliases=["del", "clear", "rm"], pass_context=True, no_pm=True)
+    @bday.command(name="remove", aliases=["del", "clear", "rm"])
     async def bday_remove(self, ctx: Context):
         """Unsets your birthday date for this server"""
         message = ctx.message
         await self.remove_user_bday(message.guild.id, message.author.id)
         await message.channel.send(self.BDAY_REMOVED())
 
-    @bday.command(name="set", pass_context=True, no_pm=True)
+    @bday.command(name="set")
     async def bday_set(self, ctx: Context, date, year: int=None):
         """Sets your birthday date for this server
 
@@ -121,7 +121,7 @@ class Birthdays(Cog):
             bday_day_str = birthday.strftime("%d").lstrip("0")  # To remove the zero-capped
             await channel.send(self.BDAY_SET(bday_month_str + " " + bday_day_str))
 
-    @bday.command(name="list", pass_context=True, no_pm=True)
+    @bday.command(name="list")
     async def bday_list(self, ctx: Context):
         """Lists the birthdays for this server
 

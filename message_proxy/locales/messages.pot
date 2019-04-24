@@ -1,0 +1,66 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2019-04-23 21:32-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: message_proxy.py:25
+#, docstring
+msgid "Send and edit messages through the bot"
+msgstr ""
+
+#: message_proxy.py:29
+msgid "Failed to delete a message in {c_name}"
+msgstr ""
+
+#: message_proxy.py:32
+msgid ":white_check_mark: Sent <{m_url}>."
+msgstr ""
+
+#: message_proxy.py:33
+msgid ":x: Failed to find the message with id {m_id} in {c_mention}."
+msgstr ""
+
+#: message_proxy.py:34
+msgid ""
+"{p}msg edit <#{c_id}> {m_id} ```\n"
+"{content}```"
+msgstr ""
+
+#: message_proxy.py:35
+msgid "Placeholder"
+msgstr ""
+
+#: message_proxy.py:46
+#, docstring
+msgid "Message proxy"
+msgstr ""
+
+#: message_proxy.py:52
+#, docstring
+msgid ""
+"Send a message in the given channel\n"
+"\n"
+"        An attachment can be provided.\n"
+"        If no content is provided, at least an attachment must be provided."
+msgstr ""
+
+#: message_proxy.py:76
+#, docstring
+msgid ""
+"Edit the message with id message_id in the given channel\n"
+"\n"
+"        No attachment can be provided."
+msgstr ""
+

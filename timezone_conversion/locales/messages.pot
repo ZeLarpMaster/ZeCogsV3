@@ -1,0 +1,133 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2019-05-03 17:37-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: timezone_conversion.py:30
+#, docstring
+msgid "Timezone conversion tools"
+msgstr ""
+
+#: timezone_conversion.py:37
+msgid "Alias List"
+msgstr ""
+
+#: timezone_conversion.py:38
+msgid "No aliases to be listed."
+msgstr ""
+
+#: timezone_conversion.py:41
+msgid ""
+":x: Invalid command.\n"
+"Usage: `{prefix}time <time> <timezone1> [timezone2]`\n"
+"Where *time* is *now* or a timestamp of format 0am or 00:00 and *timezone* is the name of a tz timezone.\n"
+"If timezone2 is omitted, it will only respond to *now* requests."
+msgstr ""
+
+#: timezone_conversion.py:45
+msgid "For a list of timezones: <https://en.wikipedia.org/wiki/List_of_tz_database_time_zones>"
+msgstr ""
+
+#: timezone_conversion.py:46
+msgid ":x: Invalid __source__ timezone. "
+msgstr ""
+
+#: timezone_conversion.py:47
+msgid ":x: Invalid __destination__ timezone. "
+msgstr ""
+
+#: timezone_conversion.py:48
+msgid ":x: The timezone doesn't exist. "
+msgstr ""
+
+#: timezone_conversion.py:49
+msgid "It is {hsource} in **{csource}** right now."
+msgstr ""
+
+#: timezone_conversion.py:50
+msgid ":white_check_mark: Added alias *{alias}* refering to {zone}."
+msgstr ""
+
+#: timezone_conversion.py:51
+msgid ":x: A timezone already has this name. Consider changing your alias' name."
+msgstr ""
+
+#: timezone_conversion.py:52
+msgid ":x: The alias already exists. Consider removing it before re-adding it."
+msgstr ""
+
+#: timezone_conversion.py:53
+msgid ":x: There cannot be spaces in aliases and timezones."
+msgstr ""
+
+#: timezone_conversion.py:54
+msgid ":white_check_mark: Removed alias *{alias}*."
+msgstr ""
+
+#: timezone_conversion.py:55
+msgid ":x: Cannot remove alias *{alias}* because it doesn't exist."
+msgstr ""
+
+#: timezone_conversion.py:56
+msgid "{hsource} in **{csource}** is equal to {hdest} in **{cdest}** ({tdiff[0]:+d}:{tdiff[1]:0>2})"
+msgstr ""
+
+#: timezone_conversion.py:57
+msgid ":x: Invalid time format. Use now, 0am or 00:00."
+msgstr ""
+
+#: timezone_conversion.py:58
+msgid ":x: Invalid time. How do you have more than 24h in your day?"
+msgstr ""
+
+#: timezone_conversion.py:71
+#, docstring
+msgid ""
+"Convert the time from timezone1 to timezone2\n"
+"\n"
+"        List of supported timezones: <https://en.wikipedia.org/wiki/List_of_tz_database_time_zones>.\n"
+"        The timezones must be the last part of the TZ column.\n"
+"        For example, you would check the time in 'Africa/Abidjan' by doing `[p]time now Abidjan`"
+msgstr ""
+
+#: timezone_conversion.py:98
+#, docstring
+msgid "Print the link to the list of possible timezones"
+msgstr ""
+
+#: timezone_conversion.py:103
+#, docstring
+msgid "Manage the timezone aliases"
+msgstr ""
+
+#: timezone_conversion.py:109
+#, docstring
+msgid ""
+"Add a new timezone alias\n"
+"\n"
+"        For example, with an alias named 'PST' pointing timezone 'GMT+8',\n"
+"        you would do: `[p]time now PST` and it would be the same as `[p]time now GMT+8`"
+msgstr ""
+
+#: timezone_conversion.py:138
+#, docstring
+msgid "Delete a timezone alias"
+msgstr ""
+
+#: timezone_conversion.py:150
+#, docstring
+msgid "List all timezone aliases"
+msgstr ""
+

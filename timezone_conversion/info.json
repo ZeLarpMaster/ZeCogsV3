@@ -1,0 +1,12 @@
+{
+    "author" : ["ZeLarpMaster#0818"],
+    "description" : "Convert time between timezones or get the current time in a timezone. Allows the creation of aliases for timezones which aren't official",
+    "install_msg" : "Enjoy converting between timezones!\nYou can add aliases for timezones which aren't official if needed.",
+    "short" : "Convert time between timezones or get the current time in a timezone",
+    "bot_version": [3, 0, 0],
+    "hidden": false,
+    "disabled": false,
+    "required_cogs": {},
+    "requirements" : ["pytz"],
+    "tags" : ["timezone", "conversion"]
+}

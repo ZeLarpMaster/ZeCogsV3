@@ -490,7 +490,7 @@ class ReactRoles(Cog):
     async def safe_get_message(self, channel: discord.TextChannel, message_id: typing.Union[str, int]) \
             -> typing.Optional[discord.Message]:
         try:
-            result = await channel.get_message(message_id)
+            result = await channel.fetch_message(message_id)
         except (discord.NotFound, discord.Forbidden, discord.HTTPException):
             result = None
         return result

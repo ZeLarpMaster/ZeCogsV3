@@ -56,7 +56,7 @@ class Reminder(Cog):
         asyncio.ensure_future(self.start_saved_reminders())
 
     # Events
-    def __unload(self):
+    def cog_unload(self):
         for user_futures in self.futures.values():
             for future in user_futures:
                 future.cancel()

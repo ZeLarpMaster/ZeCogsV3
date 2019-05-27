@@ -52,9 +52,8 @@ class Birthdays(Cog):
         # force_registration is for weaklings
         unique_id = int(hashlib.sha512((self.__author__ + "@" + self.__class__.__name__).encode()).hexdigest(), 16)
         self.config = Config.get_conf(self, identifier=unique_id)
-        if "init_custom" in dir(self.config):
-            self.config.init_custom(self.DATE_GROUP, 1)
-            self.config.init_custom(self.GUILD_DATE_GROUP, 2)
+        self.config.init_custom(self.DATE_GROUP, 1)
+        self.config.init_custom(self.GUILD_DATE_GROUP, 2)
         self.config.register_guild(channel=None, role=None, yesterdays=[])
         self.bday_loop = asyncio.ensure_future(self.initialise())  # Starts a loop which checks daily for birthdays
         asyncio.ensure_future(self.check_breaking_change())
@@ -70,7 +69,7 @@ class Birthdays(Cog):
                 await self.clean_yesterday_bdays()
                 await self.do_today_bdays()
 
-    def __unload(self):
+    def cog_unload(self):
         self.bday_loop.cancel()  # Forcefully cancel the loop when unloaded
 
     # Commands

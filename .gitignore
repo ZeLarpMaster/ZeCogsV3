@@ -102,3 +102,4 @@ ENV/
 
 .idea/
 test_cog/
+.vscode/

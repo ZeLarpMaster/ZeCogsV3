@@ -104,6 +104,7 @@ class ReactRoles(Cog):
         asyncio.ensure_future(self.process_role_queue())
 
     # Events
+    @Cog.listener()
     async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
         # noinspection PyBroadException
         try:
@@ -111,6 +112,7 @@ class ReactRoles(Cog):
         except:  # To prevent the listener from exploding if an exception happens
             traceback.print_exc()
 
+    @Cog.listener()
     async def on_raw_reaction_remove(self, payload: RawReactionActionEvent):
         # noinspection PyBroadException
         try:
@@ -118,9 +120,11 @@ class ReactRoles(Cog):
         except:  # To prevent the listener from exploding if an exception happens
             traceback.print_exc()
 
+    @Cog.listener()
     async def on_raw_message_delete(self, payload: RawMessageDeleteEvent):
         await self.check_delete_message(payload)
 
+    @Cog.listener()
     async def on_raw_bulk_message_delete(self, payload: RawBulkMessageDeleteEvent):
         new_payload = {"channel_id": payload.channel_id, "guild_id": payload.guild_id}
         for message_id in payload.message_ids:

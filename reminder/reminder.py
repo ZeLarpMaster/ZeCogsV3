@@ -114,7 +114,7 @@ class Reminder(Cog):
             for reminder in user_config["reminders"]:
                 user = self.bot.get_user(user_id)
                 if user is None:
-                    self.config.remove(reminder)  # Delete the reminder if the user doesn't have a mutual server anymore
+                    await self.config.remove(reminder)  # Delete the reminder if the user doesn't have a mutual server anymore
                 else:
                     time_diff = datetime.datetime.fromtimestamp(reminder["end_time"]) - datetime.datetime.utcnow()
                     time = max(0.0, time_diff.total_seconds())

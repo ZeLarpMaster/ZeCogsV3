@@ -157,33 +157,31 @@ class Birthdays(Cog):
                 # If the user and the role are still on the server and the user has the bday role
                 await member.remove_roles(role)
 
-    async def handle_bday(self, user_id: int, year: str):
+    async def handle_bday(self, guild_id: int, guild_config: dict, user_id: int, year: str):
         embed = discord.Embed(color=discord.Colour.gold())
         if year is not None:
             age = datetime.date.today().year - int(year)  # Doesn't support non-eastern age counts but whatever
             embed.description = self.BDAY_WITH_YEAR(user_id, age)
         else:
             embed.description = self.BDAY_WITHOUT_YEAR(user_id)
-        all_guild_configs = await self.config.all_guilds()
-        for guild_id, guild_config in all_guild_configs.items():
-            guild = self.bot.get_guild(guild_id)
-            if guild is not None:  # Ignore unavailable servers or servers the bot isn't in anymore
-                member = guild.get_member(user_id)
-                if member is not None:
-                    role_id = guild_config.get("role")
-                    if role_id is not None:
-                        role = discord.utils.get(guild.roles, id=role_id)
-                        if role is not None:
-                            try:
-                                await member.add_roles(role)
-                            except (discord.Forbidden, discord.HTTPException):
-                                pass
-                            else:
-                                async with self.config.guild(guild).yesterdays() as yesterdays:
-                                    yesterdays.append(member.id)
-                    channel = guild.get_channel(guild_config.get("channel"))
-                    if channel is not None:
-                        await channel.send(embed=embed)
+        guild = self.bot.get_guild(guild_id)
+        if guild is not None:  # Ignore unavailable servers or servers the bot isn't in anymore
+            member = guild.get_member(user_id)
+            if member is not None:
+                role_id = guild_config.get("role")
+                if role_id is not None:
+                    role = discord.utils.get(guild.roles, id=role_id)
+                    if role is not None:
+                        try:
+                            await member.add_roles(role)
+                        except (discord.Forbidden, discord.HTTPException):
+                            pass
+                        else:
+                            async with self.config.guild(guild).yesterdays() as yesterdays:
+                                yesterdays.append(member.id)
+                channel = guild.get_channel(guild_config.get("channel"))
+                if channel is not None:
+                    await channel.send(embed=embed)
 
     async def clean_bdays(self):
         # Cleans the birthday entries with no user's birthday
@@ -221,7 +219,7 @@ class Birthdays(Cog):
             this_date = datetime.datetime.utcnow().date().replace(year=1)
             todays_bday_config = guild_config.get(str(this_date.toordinal()), {})
             for user_id, year in todays_bday_config.items():
-                asyncio.ensure_future(self.handle_bday(int(user_id), year))
+                asyncio.ensure_future(self.handle_bday(int(guild_id), guild_config, int(user_id), year))
 
     # Provided by <@78631113035100160>
     async def maybe_update_guild(self, guild: discord.Guild):

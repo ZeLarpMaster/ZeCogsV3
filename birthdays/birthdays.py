@@ -157,7 +157,7 @@ class Birthdays(Cog):
                 # If the user and the role are still on the server and the user has the bday role
                 await member.remove_roles(role)
 
-    async def handle_bday(self, guild_id: int, guild_config: dict, user_id: int, year: str):
+    async def handle_bday(self, guild_id: int, user_id: int, year: str):
         embed = discord.Embed(color=discord.Colour.gold())
         if year is not None:
             age = datetime.date.today().year - int(year)  # Doesn't support non-eastern age counts but whatever
@@ -168,7 +168,7 @@ class Birthdays(Cog):
         if guild is not None:  # Ignore unavailable servers or servers the bot isn't in anymore
             member = guild.get_member(user_id)
             if member is not None:
-                role_id = guild_config.get("role")
+                role_id = await self.config.guild(guild).role()
                 if role_id is not None:
                     role = discord.utils.get(guild.roles, id=role_id)
                     if role is not None:
@@ -179,9 +179,18 @@ class Birthdays(Cog):
                         else:
                             async with self.config.guild(guild).yesterdays() as yesterdays:
                                 yesterdays.append(member.id)
-                channel = guild.get_channel(guild_config.get("channel"))
+                    else:
+                        self.logger.warning("Could not find the role with id {} in {}".format(role_id, guild))
+                channel_id = await self.config.guild(guild).channel()
+                channel = guild.get_channel(channel_id)
                 if channel is not None:
                     await channel.send(embed=embed)
+                else:
+                    self.logger.warning("Couldn't find the birthdays channel in guild {} with id {}".format(guild, channel_id))
+            else:
+                self.logger.warning("Could not find the member with id {} in {}".format(user_id, guild))
+        else:
+            self.logger.warning("Could not find the guild with id {}".format(guild_id))
 
     async def clean_bdays(self):
         # Cleans the birthday entries with no user's birthday
@@ -214,12 +223,12 @@ class Birthdays(Cog):
             await self.config.guild(discord.Guild(data={"id": guild_id}, state=None)).yesterdays.clear()
 
     async def do_today_bdays(self):
-        guild_configs = await self.get_all_date_configs()
-        for guild_id, guild_config in guild_configs.items():
+        bday_configs = await self.get_all_date_configs()
+        for guild_id, bdays_config in bday_configs.items():
             this_date = datetime.datetime.utcnow().date().replace(year=1)
-            todays_bday_config = guild_config.get(str(this_date.toordinal()), {})
+            todays_bday_config = bdays_config.get(str(this_date.toordinal()), {})
             for user_id, year in todays_bday_config.items():
-                asyncio.ensure_future(self.handle_bday(int(guild_id), guild_config, int(user_id), year))
+                asyncio.ensure_future(self.handle_bday(int(guild_id), int(user_id), year))
 
     # Provided by <@78631113035100160>
     async def maybe_update_guild(self, guild: discord.Guild):

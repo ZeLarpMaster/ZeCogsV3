@@ -416,14 +416,14 @@ class ReactRoles(Cog):
             await self.add_role_queue(payload.guild_id, payload.user_id, role, True, linked_roles=link)
 
     async def check_remove_role(self, payload: RawReactionActionEvent):
-        if payload.user_id == self.bot.user.id:
-            # Safeguard in case someone removes the bot's reaction by accident
-            # noinspection PyProtectedMember
-            await self.bot.http.add_reaction(payload.message_id, payload.channel_id, payload.emoji._as_reaction())
-        else:
-            emoji_str = str(payload.emoji.id) if payload.emoji.is_custom_emoji() else payload.emoji.name
-            role = self.get_from_cache(payload.guild_id, payload.channel_id, payload.message_id, emoji_str)
-            if role is not None:
+        emoji_str = str(payload.emoji.id) if payload.emoji.is_custom_emoji() else payload.emoji.name
+        role = self.get_from_cache(payload.guild_id, payload.channel_id, payload.message_id, emoji_str)
+        if role is not None:
+            if payload.user_id == self.bot.user.id:
+                # Safeguard in case someone removes the bot's reaction by accident
+                # noinspection PyProtectedMember
+                await self.bot.http.add_reaction(payload.message_id, payload.channel_id, payload.emoji._as_reaction())
+            else:
                 await self.add_role_queue(payload.guild_id, payload.user_id, role, False)
 
     async def check_delete_message(self, payload: RawMessageDeleteEvent):

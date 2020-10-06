@@ -66,8 +66,14 @@ class Birthdays(Cog):
                 now = datetime.datetime.utcnow()
                 tomorrow = (now + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
                 await asyncio.sleep((tomorrow - now).total_seconds())
-                await self.clean_yesterday_bdays()
-                await self.do_today_bdays()
+                try:
+                    await self.clean_yesterday_bdays()
+                except Exception as e:
+                    self.logger.error("An error occured during cleaning up of previous birthdays.", exc_info=e)
+                try:
+                    await self.do_today_bdays()
+                except Exception as e:
+                    self.logger.error("An error occured during doing todays birthdays.", exc_info=e)
 
     def cog_unload(self):
         self.bday_loop.cancel()  # Forcefully cancel the loop when unloaded
@@ -220,7 +226,7 @@ class Birthdays(Cog):
         for guild_id, guild_config in all_guild_configs.items():
             for user_id in guild_config.get("yesterdays", []):
                 asyncio.ensure_future(self.clean_bday(guild_id, guild_config, user_id))
-            await self.config.guild(discord.Guild(data={"id": guild_id}, state=None)).yesterdays.clear()
+            await self.config.guild_from_id(guild_id).yesterdays.clear()
 
     async def do_today_bdays(self):
         bday_configs = await self.get_all_date_configs()

@@ -140,7 +140,6 @@ class Birthdays(Cog):
         await self.clean_bdays()
         bdays = await self.get_guild_date_configs(message.guild.id)
         this_year = datetime.date.today().year
-        embed_list = []
         msg = f"{bold(self.BDAY_LIST_TITLE())}\n"
         for k, g in itertools.groupby(sorted(datetime.datetime.fromordinal(int(o)) for o in bdays.keys()),
                                       lambda i: i.month):
@@ -154,13 +153,11 @@ class Birthdays(Cog):
                 msg += f"{bold(datetime.datetime(year=1, month=k, day=1).strftime('%B'))}\n"
                 msg += f"{value}\n\n"
 
-        for page in pagify(msg, delims=["\n\n"], page_length=2000):
-            embed = discord.Embed(description=page, color=discord.Colour.lighter_grey())
-            embed_list.append(embed)
-
-        for i, em in enumerate(embed_list):
-            em.set_footer(text=f"Page {i + 1}/{len(embed_list)}")
-            await ctx.send(embed=em)
+        pages = list(pagify(msg, delims=["\n\n"], page_length=2000))
+        for i, em in enumerate(pages):
+            embed = discord.Embed(description=em, color=discord.Colour.lighter_grey())
+            embed.set_footer(text=f"Page {i + 1}/{len(pages)}")
+            await ctx.send(embed=embed)
 
     # Utilities
     async def clean_bday(self, guild_id: int, guild_config: dict, user_id: int):

@@ -11,6 +11,7 @@ from redbot.core.bot import Red
 from redbot.core.config import Group
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.commands import Context, Cog
+from redbot.core.utils.chat_formatting import bold, pagify
 
 T_ = Translator("Birthdays", __file__)  # pygettext3 -Dnp locales birthdays.py
 
@@ -129,6 +130,7 @@ class Birthdays(Cog):
             bday_day_str = birthday.strftime("%d").lstrip("0")  # To remove the zero-capped
             await channel.send(self.BDAY_SET(bday_month_str + " " + bday_day_str))
 
+    @commands.cooldown(1, 60, commands.BucketType.channel)
     @bday.command(name="list")
     async def bday_list(self, ctx: Context):
         """Lists the birthdays for this server
@@ -138,7 +140,7 @@ class Birthdays(Cog):
         await self.clean_bdays()
         bdays = await self.get_guild_date_configs(message.guild.id)
         this_year = datetime.date.today().year
-        embed = discord.Embed(title=self.BDAY_LIST_TITLE(), color=discord.Colour.lighter_grey())
+        msg = f"{bold(self.BDAY_LIST_TITLE())}\n"
         for k, g in itertools.groupby(sorted(datetime.datetime.fromordinal(int(o)) for o in bdays.keys()),
                                       lambda i: i.month):
             # Basically separates days with "\n" and people on the same day with ", "
@@ -148,8 +150,14 @@ class Birthdays(Cog):
                                           for u_id, year in bdays.get(str(date.toordinal()), {}).items())
                               for date in g if len(bdays.get(str(date.toordinal()))) > 0)
             if not value.isspace():  # Only contains whitespace when there's no birthdays in that month
-                embed.add_field(name=datetime.datetime(year=1, month=k, day=1).strftime("%B"), value=value)
-        await message.channel.send(embed=embed)
+                msg += f"{bold(datetime.datetime(year=1, month=k, day=1).strftime('%B'))}\n"
+                msg += f"{value}\n\n"
+
+        pages = list(pagify(msg, delims=["\n\n"], page_length=2000))
+        for i, em in enumerate(pages):
+            embed = discord.Embed(description=em, color=discord.Colour.lighter_grey())
+            embed.set_footer(text=f"Page {i + 1}/{len(pages)}")
+            await ctx.send(embed=embed)
 
     # Utilities
     async def clean_bday(self, guild_id: int, guild_config: dict, user_id: int):
